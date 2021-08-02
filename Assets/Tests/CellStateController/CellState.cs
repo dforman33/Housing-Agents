@@ -8,33 +8,35 @@ using Custom;
 public class CellState : MonoBehaviour
 {
     //public Cell2D cell;
+    public Cell2D cell;
     public CellStateController controller;
-    int count = 0;
+    public static int count;
+    public Board _board;
 
     private void Start()
     {
+        count = 0;
         //controller = GetComponent<CellStateController>();
         controller = GameObject.FindObjectOfType<CellStateController>();
+        _board = GameObject.FindObjectOfType<Board>();
     }
 
     private void OnMouseDown()
     {
-        //count = count++ % controller.OccupiedCell.Count;
+        count = count++ % controller.OccupiedCell.Count;
         Transform transf = this.transform;
-        var go = controller.OpenSpaceCell;
-        int first = this.GetInstanceID();
-        Debug.Log("Object ID found " + first);
+        var go = controller.OccupiedCell[count];
 
-        //if(this != null) Destroy(this.transform.GetChild(0));
-        Destroy(this.transform.GetChild(0));
-        //int countLoop = 0;
-        //while (this.transform.childCount > 0 || countLoop < 10)
-        //{
-        //    countLoop++;
-        //    Destroy(this.transform.GetChild(0));
-        //}
+        //Destroy(this.transform.GetChild(0));
+        int loops = 0;
+        while (this.transform.childCount > 0 && loops < 10)
+        {
+            loops++;
+            Destroy(this.transform.GetChild(0));
+        }
+
+        transform.localScale = new Vector3(.25f, .25f, .25f);
         Instantiate(go, transf);
-        Debug.Log("Mouse down at: " + this.transform.position.x + "," + this.transform.position.x);
     }
 }
 

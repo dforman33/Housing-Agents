@@ -20,12 +20,12 @@ public class Board : MonoBehaviour
     private void Start()
     {
         SetupBoard();
-        Debug.Log("Board set up done");
+        //Debug.Log("Board set up done");
     }
 
     private void SetupBoard()
     {
-        arrayScale = scale * 2;
+        arrayScale = scale * 1.1f;
         baseOffset = scale;
         voxelScale = new Vector3(voxelFactor, voxelFactor, voxelFactor);
 
@@ -35,7 +35,7 @@ public class Board : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                var go = Instantiate(cellInitialPrebab, new Vector3(x, 0, z), new Quaternion());
+                var go = Instantiate(cellInitialPrebab, new Vector3(x* arrayScale, 0, z* arrayScale), new Quaternion());
                 globalState[x, z] = go.GetComponent<CellState>();
             }
         }
