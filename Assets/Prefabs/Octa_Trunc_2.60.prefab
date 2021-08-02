@@ -15,10 +15,10 @@ GameObject:
   - component: {fileID: 4581341068277753512}
   m_Layer: 8
   m_Name: Octa_Trunc_2.60
-  m_TagString: Untagged
+  m_TagString: CellPrefabs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &2349914571519306434
 Transform:
@@ -172,6 +172,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8ba3c95d870cb17499ab67919b60a1e0, type: 3}
       propertyPath: m_Name
       value: Octa_Trunc_2.60
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8ba3c95d870cb17499ab67919b60a1e0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ba3c95d870cb17499ab67919b60a1e0, type: 3}

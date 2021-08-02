@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4581341068277753512}
   m_Layer: 8
   m_Name: Octa_Collider
-  m_TagString: Untagged
+  m_TagString: CellPrefabs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -107,7 +107,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3159066741105782904}
-  m_Material: {fileID: 13400000, guid: 5656ca22f2247ac4a84a73bd56316fc0, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
