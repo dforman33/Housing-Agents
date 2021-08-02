@@ -13,19 +13,27 @@ public class CellState : MonoBehaviour
 
     private void Start()
     {
+        //controller = GetComponent<CellStateController>();
         controller = GameObject.FindObjectOfType<CellStateController>();
     }
 
     private void OnMouseDown()
     {
-        Debug.Log("mouse down");
-        count = count++ % controller.OccupiedCell.Count;
-        var go = controller.OccupiedCell[count];
-        while (this.transform.childCount > 0)
-        {
-            Destroy(this.transform.GetChild(0));
-        }
-        Instantiate(go, this.transform);
+        //count = count++ % controller.OccupiedCell.Count;
+        Transform transf = this.transform;
+        var go = controller.OpenSpaceCell;
+        int first = this.GetInstanceID();
+        Debug.Log("Object ID found " + first);
+
+        //if(this != null) Destroy(this.transform.GetChild(0));
+        Destroy(this.transform.GetChild(0));
+        //int countLoop = 0;
+        //while (this.transform.childCount > 0 || countLoop < 10)
+        //{
+        //    countLoop++;
+        //    Destroy(this.transform.GetChild(0));
+        //}
+        Instantiate(go, transf);
         Debug.Log("Mouse down at: " + this.transform.position.x + "," + this.transform.position.x);
     }
 }
