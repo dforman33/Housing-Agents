@@ -32,7 +32,7 @@ public class CellState : MonoBehaviour
         while (this.transform.childCount > 0 && loops < 10)
         {
             loops++;
-            Destroy(this.transform.GetChild(0));
+            Destroy(this.transform.GetChild(0).gameObject);
         }
 
         transform.localScale = new Vector3(.25f, .25f, .25f);

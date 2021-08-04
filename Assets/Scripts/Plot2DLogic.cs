@@ -60,14 +60,14 @@ public class Plot2DLogic : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                Debug.Log("Cell protected at " + plotCoord.x + "," + plotCoord.z);
+                Debug.Log("Cell protected at " + plotCoord.X + "," + plotCoord.Z);
                 plot.UpdatePlot2D(plotCoord, 255);
                 ClearObjects();
                 DrawPlot();
             }
             else
             {
-                Debug.Log("Cell occupied at " + plotCoord.x + "," + plotCoord.z);
+                Debug.Log("Cell occupied at " + plotCoord.X + "," + plotCoord.Z);
                 plot.UpdatePlot2D(plotCoord, 1);
                 ClearObjects();
                 DrawPlot();
@@ -75,7 +75,7 @@ public class Plot2DLogic : MonoBehaviour
         }
         else if (isWithinPlot && remove)
         {
-            Debug.Log("Cell removed at " + plotCoord.x + "," + plotCoord.z);
+            Debug.Log("Cell removed at " + plotCoord.X + "," + plotCoord.Z);
             plot.UpdatePlot2D(plotCoord, 0);
             ClearObjects();
             DrawPlot();

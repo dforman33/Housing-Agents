@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Custom;
+
 public class Board : MonoBehaviour
 {
     public GameObject cellInitialPrebab;
@@ -20,7 +22,6 @@ public class Board : MonoBehaviour
     private void Start()
     {
         SetupBoard();
-        //Debug.Log("Board set up done");
     }
 
     private void SetupBoard()

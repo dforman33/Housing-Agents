@@ -46,7 +46,7 @@ public class Plot2D
 
     private void UpdateCell(Coordinate2D coord, byte newState)
     {
-        cells[coord.x, coord.z].updateCell(newState);
+        cells[coord.X, coord.Z].updateCell(newState);
     }
 
 }

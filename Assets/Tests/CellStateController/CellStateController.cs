@@ -8,6 +8,7 @@ public class CellStateController : MonoBehaviour
     //public GameObject OccupiedCell;
     public List<GameObject> OccupiedCell;
     public GameObject OpenSpaceCell;
+
 }
 
 
