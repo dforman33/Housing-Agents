@@ -8,11 +8,12 @@ public class Board : MonoBehaviour
 {
     public GameObject cellInitialPrebab;
     public CellState[,] globalState; 
-
+    
     [SerializeField] public int width = 10; //x length
     [SerializeField] public int depth = 10; //z length
     [SerializeField] public float scale = 1;
-    [SerializeField] public Vector3 plotOrigin = new Vector3(0, 0, 0);
+    [SerializeField] public Vector3 plotOrigin = new Vector3(0, 0, 0); //bottom left corner
+    private byte maxHeight; //this is the absolute maximum height for the aggregation
 
     private float arrayScale;
     private float baseOffset;

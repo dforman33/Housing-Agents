@@ -53,7 +53,7 @@ public class Plot2DLogic : MonoBehaviour
     {
         bool remove = false;
         bool isWithinPlot = false;
-        Coordinate2D plotCoord = Navigation.CheckCollisionOnPlot(plotOrigin, arrayScale, width, depth, out remove, out isWithinPlot);
+        Coordinate2D plotCoord = Navigation.CheckCollisionOnPlot2D(plotOrigin, arrayScale, width, depth, out remove, out isWithinPlot);
 
 
         if (isWithinPlot && !remove)

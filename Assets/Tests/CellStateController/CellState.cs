@@ -9,13 +9,14 @@ public class CellState : MonoBehaviour
 {
     //public Cell2D cell;
     public Cell2D cell;
-    public CellStateController controller;
-    public static int count;
-    public Board _board;
+    //private static int count;
+    private Board _board;
+
+    [HideInInspector] public CellStateController controller;
 
     private void Start()
     {
-        count = 0;
+        //count = 0;
         //controller = GetComponent<CellStateController>();
         controller = GameObject.FindObjectOfType<CellStateController>();
         _board = GameObject.FindObjectOfType<Board>();
@@ -23,20 +24,34 @@ public class CellState : MonoBehaviour
 
     private void OnMouseDown()
     {
-        count = count++ % controller.OccupiedCell.Count;
-        Transform transf = this.transform;
-        var go = controller.OccupiedCell[count];
+        //count = count++ % controller.OccupiedCell.Count;
+        //var go = controller.OccupiedCell[count];
+        //count++;
 
-        //Destroy(this.transform.GetChild(0));
-        int loops = 0;
-        while (this.transform.childCount > 0 && loops < 10)
+        //Transform transf = this.transform;
+        var occupied = controller.OccupiedCell;
+        Destroy(gameObject);
+
+        //int loops = 0;
+
+        //while (this.transform.childCount > 0 && loops < 10)
+        //{
+        //    loops++;
+        //    Destroy(this.transform.GetChild(0).gameObject);
+        //}
+
+        var child = Instantiate(occupied, transform.position, transform.rotation);
+
+        if (Input.GetKey(KeyCode.C))
         {
-            loops++;
-            Destroy(this.transform.GetChild(0).gameObject);
+            child.GetComponent<Renderer>().material.color = Color.blue;
         }
 
-        transform.localScale = new Vector3(.25f, .25f, .25f);
-        Instantiate(go, transf);
+        else if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Destroy(child.gameObject);
+            Instantiate(controller.OpenSpaceCell, transform.position, transform.rotation);
+        }
     }
 }
 
