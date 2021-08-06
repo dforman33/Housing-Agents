@@ -47,7 +47,7 @@ public class Plot3D : MonoBehaviour
                     newGo.name = "Cell(" +x+","+y+"," + z + ")";
                     newGo.transform.parent = transform;
                     cells[x, y, z] = newGo.GetComponent<Cell3D>();
-                    cells[x, y, z].SetUpCell(x, y, z, this, controller);
+                    cells[x, y, z].SetUpCell(x, y, z, this, controller,0);
                 }
             }
         }
@@ -61,10 +61,20 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (y == 5)
+                    if (y == 5 && x ==5)
                     {
                         cells[x, y, z].UpdateCell(20);
-                        Debug.Log("Updated cell position: " + cells[x, y, z].cellPos);
+                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
+                    }
+                    if (y == 1 && x == 1)
+                    {
+                        cells[x, y, z].UpdateCell(30);
+                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
+                    }
+                    if (x == 9 && z == 1)
+                    {
+                        cells[x, y, z].UpdateCell(40);
+                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
                     }
                 }
             }

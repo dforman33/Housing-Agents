@@ -24,24 +24,17 @@ namespace Custom
         [HideInInspector] public CellStateController controller;
         [HideInInspector] public Plot3D plot;
 
-        public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot, CellStateController controller)
+        public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot, CellStateController controller, byte playerID)
         {
             coordinate = new Coordinate3D(coorX, coorY, coorZ);
             this.plot = plot;
             this.controller = controller;
-
             cellScale = plot.scale;
-
             isFixed = false;
             cellPos = transform.position;
-
-            //cellPrefab = Instantiate(GameObject.FindObjectOfType<CellStateController>().EmptyCell, cellPos, Quaternion.identity);
-            //cellPrefab.transform.parent = transform;
-
-            UpdatePlayerID(0);
+            UpdatePlayerID(playerID);
             Debug.Log("Cell position: " + cellPos+ " and cell name: " + this.name);
             UpdateCellType();
-            
         }
 
         public void UpdateCell(byte playerID)
@@ -64,29 +57,25 @@ namespace Custom
             else cellType = CellType.OCCUPIED;
         }
 
-        private void UpdatePrefab()
+        public void UpdatePrefab()
         {
 
             GameObject oldGo = gameObject;
+
             
-            if (cellType == CellType.EMPTY) { 
-                var newGo = Instantiate(controller.EmptyCell, cellPos, Quaternion.identity);
-                if (oldGo != null) Destroy(oldGo);
-                newGo.transform.parent = plot.transform;
-                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+            if (cellType == CellType.EMPTY) {
+                SetNewCellInPlot(controller.EmptyCell);
+
             }
             if (cellType == CellType.OCCUPIED) {
-                var newGo = Instantiate(controller.OccupiedCell, cellPos, Quaternion.identity);
-                if (oldGo != null) Destroy(oldGo);
-                newGo.transform.parent = plot.transform;
-                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+                SetNewCellInPlot(controller.OccupiedCell);
             }
-            if (cellType == CellType.OPENSPACE) { 
-                var newGo = Instantiate(controller.OpenSpaceCell, cellPos, Quaternion.identity);
-                if (oldGo != null) Destroy(oldGo);
-                newGo.transform.parent = plot.transform;
-                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+            if (cellType == CellType.OPENSPACE) {
+                SetNewCellInPlot(controller.OpenSpaceCell);
             }
+
+            if (oldGo != null) Destroy(oldGo);
+
         }
 
         private void UpdateColor()
@@ -102,6 +91,19 @@ namespace Custom
             else
                 UpdateCell(10);
         }
+
+        void SetNewCellInPlot(GameObject prefabType)
+        {
+            //this is to simplify the routine of updating the prefab
+            var newGo = Instantiate(prefabType, cellPos, Quaternion.identity);
+            newGo.name = "Cell(" + coordinate.X + "," + coordinate.Y + "," + coordinate.Z + ")";
+            newGo.transform.parent = plot.transform;
+            var newCell = newGo.GetComponent<Cell3D>();
+            newCell.SetUpCell(coordinate.X, coordinate.Y, coordinate.Z, plot, controller, playerID);
+            plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newCell;
+
+        }
+
 
 
     }
