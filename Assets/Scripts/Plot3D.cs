@@ -43,12 +43,11 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var newGo = Instantiate(controller.OpenSpaceCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
+                    var newGo = Instantiate(controller.EmptyCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
                     newGo.name = "Cell(" +x+","+y+"," + z + ")";
                     newGo.transform.parent = transform;
                     cells[x, y, z] = newGo.GetComponent<Cell3D>();
-                    cells[x, y, z].SetUpCell(x, y, z, this);
-                    //Destroy(newGo);
+                    cells[x, y, z].SetUpCell(x, y, z, this, controller);
                 }
             }
         }
@@ -62,17 +61,11 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (x == 0 || y == 1 || y == 5)
+                    if (y == 5)
                     {
                         cells[x, y, z].UpdateCell(20);
-                        
                         Debug.Log("Updated cell position: " + cells[x, y, z].cellPos);
                     }
-                    else
-                    {
-                        Destroy(cells[x, y, z].cellPrefab);
-                    }
-                    
                 }
             }
         }

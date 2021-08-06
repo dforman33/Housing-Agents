@@ -16,7 +16,7 @@ namespace Custom
         [HideInInspector] public float cellScale;
 
         [HideInInspector] public CellType cellType;
-        [HideInInspector] public GameObject cellPrefab;
+        //[HideInInspector] public GameObject cellPrefab;
         [HideInInspector] public bool isFixed;         
         [HideInInspector] public byte playerID;
 
@@ -24,24 +24,22 @@ namespace Custom
         [HideInInspector] public CellStateController controller;
         [HideInInspector] public Plot3D plot;
 
-        
-        private void Start()
-        {
-            controller = GameObject.FindObjectOfType<CellStateController>();
-            cellScale = GameObject.FindObjectOfType<Plot3D>().scale;
-        }
-
-
-        public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot)
+        public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot, CellStateController controller)
         {
             coordinate = new Coordinate3D(coorX, coorY, coorZ);
             this.plot = plot;
-            isFixed = false;
+            this.controller = controller;
 
-            cellPrefab = Instantiate(GameObject.FindObjectOfType<CellStateController>().EmptyCell, new Vector3(cellPos.x, cellPos.y, cellPos.z), Quaternion.identity);
+            cellScale = plot.scale;
+
+            isFixed = false;
+            cellPos = transform.position;
+
+            //cellPrefab = Instantiate(GameObject.FindObjectOfType<CellStateController>().EmptyCell, cellPos, Quaternion.identity);
+            //cellPrefab.transform.parent = transform;
 
             UpdatePlayerID(0);
-            Debug.Log("Cell position: " + cellPos);
+            Debug.Log("Cell position: " + cellPos+ " and cell name: " + this.name);
             UpdateCellType();
             
         }
@@ -62,33 +60,47 @@ namespace Custom
         private void UpdateCellType()
         {
             if (playerID == 0) cellType = CellType.EMPTY;
-            else if (playerID > 0 && playerID < 255) cellType = CellType.OPENSPACE;
+            else if (playerID == 255) cellType = CellType.OPENSPACE;
             else cellType = CellType.OCCUPIED;
         }
 
         private void UpdatePrefab()
         {
-            cellPos = gameObject.transform.localPosition;
-            Debug.Log("Updated cell position: " + cellPos);
 
-            GameObject oldGo = cellPrefab;
+            GameObject oldGo = gameObject;
             
-            if (cellType == CellType.EMPTY) { cellPrefab = Instantiate(controller.EmptyCell, cellPrefab.transform.localPosition, Quaternion.identity); }
-            if (cellType == CellType.OCCUPIED) { cellPrefab = Instantiate(controller.OccupiedCell, cellPrefab.transform.localPosition, Quaternion.identity); }
-            if (cellType == CellType.OPENSPACE) { cellPrefab = Instantiate(controller.OpenSpaceCell, cellPrefab.transform.localPosition, Quaternion.identity); }
-
-            if (oldGo != null) Destroy(oldGo);
+            if (cellType == CellType.EMPTY) { 
+                var newGo = Instantiate(controller.EmptyCell, cellPos, Quaternion.identity);
+                if (oldGo != null) Destroy(oldGo);
+                newGo.transform.parent = plot.transform;
+                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+            }
+            if (cellType == CellType.OCCUPIED) {
+                var newGo = Instantiate(controller.OccupiedCell, cellPos, Quaternion.identity);
+                if (oldGo != null) Destroy(oldGo);
+                newGo.transform.parent = plot.transform;
+                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+            }
+            if (cellType == CellType.OPENSPACE) { 
+                var newGo = Instantiate(controller.OpenSpaceCell, cellPos, Quaternion.identity);
+                if (oldGo != null) Destroy(oldGo);
+                newGo.transform.parent = plot.transform;
+                plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newGo.GetComponent<Cell3D>();
+            }
         }
 
         private void UpdateColor()
         {
-            this.cellPrefab.GetComponent<Renderer>().material.color = Tools.GetColor(playerID);
+            if (cellType == CellType.OCCUPIED)
+                plot.cells[coordinate.X, coordinate.Y, coordinate.Z].gameObject.GetComponent<Renderer>().material.color = Tools.GetColor(playerID);
         }
 
         public void OnMouseDown()
         {
-            UpdateCell(10);
-            if (Input.GetKey(KeyCode.X)) UpdateCell(255);   
+            if (Input.GetKey(KeyCode.LeftShift)) 
+                UpdateCell(255);
+            else
+                UpdateCell(10);
         }
 
 
