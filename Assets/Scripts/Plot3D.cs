@@ -19,13 +19,19 @@ public class Plot3D : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CellStateController>();
-        
-
         Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
 
         SetupBoard();
-        AddSomeOccupied(10);
+        
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            AddSomeOccupied((byte)10);
+        }
     }
 
     public void SetupBoard()
@@ -37,12 +43,12 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    Vector3 pos = new Vector3(scale * x, scale * y, scale * z);
-                    var go = Instantiate(controller.OpenSpaceCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
-                    cells[x, y, z] = go.GetComponent<Cell3D>();
-                    cells[x, y, z].transform.parent = transform;
-                    cells[x, y, z].SetUpCell(x, y, z, new Vector3(scale * x, scale * y, scale * z));
-                    Destroy(go);
+                    var newGo = Instantiate(controller.OpenSpaceCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
+                    newGo.name = "Cell(" +x+","+y+"," + z + ")";
+                    newGo.transform.parent = transform;
+                    cells[x, y, z] = newGo.GetComponent<Cell3D>();
+                    cells[x, y, z].SetUpCell(x, y, z, this);
+                    //Destroy(newGo);
                 }
             }
         }
