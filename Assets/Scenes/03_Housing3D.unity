@@ -167,9 +167,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6714fed287163b4f954ca13107b9afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EmptyCell: {fileID: 3159066741105782904, guid: 103c609f72ea83344a13f979e1aa455c, type: 3}
-  OccupiedCell: {fileID: 3159066741105782904, guid: 103c609f72ea83344a13f979e1aa455c, type: 3}
-  OpenSpaceCell: {fileID: 3159066741105782904, guid: 103c609f72ea83344a13f979e1aa455c, type: 3}
+  EmptyCell: {fileID: 1070282286005765536, guid: 15c70a940cb289c48a82f7655d73b484, type: 3}
+  OccupiedCell: {fileID: 5872526976459809534, guid: 87de2efbd46005644877dda4cb03afcc, type: 3}
+  OpenSpaceCell: {fileID: 1070282286005765536, guid: fadaf39a86e91584b872cb2fa2f217cb, type: 3}
 --- !u!114 &751078185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,7 +187,6 @@ MonoBehaviour:
   depth: 10
   scale: 1
   plotOrigin: {x: 0, y: 0, z: 0}
-  basePrefab: {fileID: 3159066741105782904, guid: 103c609f72ea83344a13f979e1aa455c, type: 3}
   controller: {fileID: 0}
 --- !u!1 &1423429173
 GameObject:

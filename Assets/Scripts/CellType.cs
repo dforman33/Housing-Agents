@@ -1,5 +1,5 @@
 
-public enum State
+public enum CellType
 {
     OCCUPIED,
     EMPTY,

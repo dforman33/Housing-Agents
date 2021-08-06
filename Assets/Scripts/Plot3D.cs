@@ -12,20 +12,22 @@ public class Plot3D : MonoBehaviour
     public int depth = 10; //z length
     public float scale = 1;
     public Vector3 plotOrigin = new Vector3(0, 0, 0);
-    public GameObject basePrefab;
 
-    private CellBehaviour[,,] cellStates;
+    [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public CellStateController controller;
 
     private void Start()
     {
         controller = GetComponent<CellStateController>();
         SetupBoard();
+
+        Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
+        Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
     }
 
     private void SetupBoard()
     {
-        cellStates = new CellBehaviour[width, height, depth];
+        cells = new Cell3D[width, height, depth];
         for (int y = 0; y < height; y++)
         {
             for (int z = 0; z < depth; z++)
@@ -33,34 +35,13 @@ public class Plot3D : MonoBehaviour
                 for (int x = 0; x < width; x++)
                 {
                     Vector3 pos = new Vector3(scale * x, scale * y, scale * z);
-
-                    var go = Instantiate(controller.EmptyCell, pos, Quaternion.identity);
-                    CellBehaviour cell = go.GetComponent<CellBehaviour>();
-                    cellStates[x, y, z] = cell;
-                    cellStates[x, y, z].SetupCell(x, y, z);
-                    cellStates[x, y, z].UpdateCell(State.EMPTY, 0);
-
-                    //cell.UpdateCell(State.EMPTY, 0);
-                    //cellStates[x, y, z] = cell;
-
-                    if (y == 0)
-                    {
-                        var pl = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                        pl.transform.position = pos;
-                        float plScale = 0.095f;
-                        pl.transform.localScale = new Vector3(scale * plScale, scale * plScale, scale * plScale);
-                    }
+                    var go = Instantiate(controller.OpenSpaceCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
+                    cells[x, y, z] = go.GetComponent<Cell3D>();
+                    cells[x, y, z].SetUpCell(x, y, z, new Vector3(scale * x, scale * y, scale * z));
+                    Debug.Log("Cell position: " +  cells[x, y, z].cellPos);
+                    Destroy(go);
                 }
-
             }
-
         }
     }
-
-
-
-
-
-
-
 }
