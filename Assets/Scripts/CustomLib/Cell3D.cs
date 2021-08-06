@@ -29,6 +29,7 @@ namespace Custom
         {
             controller = GameObject.FindObjectOfType<CellStateController>();
             plot = GameObject.FindObjectOfType<Plot3D>();
+            cellScale = GameObject.FindObjectOfType<Plot3D>().scale;
         }
 
 
@@ -36,16 +37,13 @@ namespace Custom
         {
             coordinate = new Coordinate3D(coorX, coorY, coorZ);
             cellPos = vec3Pos;
-            cellScale = GameObject.FindObjectOfType<Plot3D>().scale;
             isFixed = false;
 
             cellPrefab = Instantiate(GameObject.FindObjectOfType<CellStateController>().EmptyCell, new Vector3(cellPos.x, cellPos.y, cellPos.z), Quaternion.identity);
 
             UpdatePlayerID(0);
             UpdateCellType();
-            //UpdatePrefab();
             Debug.Log("Updated cell position: " + cellPos.x + "," + cellPos.y + "," + cellPos.z);
-
         }
 
         public void UpdateCell(byte playerID)
@@ -56,30 +54,30 @@ namespace Custom
             UpdateColor();
         }
 
-        public void UpdatePlayerID(byte player)
+        private void UpdatePlayerID(byte player)
         {
             playerID = player;
         }
 
-        public void UpdateCellType()
+        private void UpdateCellType()
         {
             if (playerID == 0) cellType = CellType.EMPTY;
             else if (playerID == 255) cellType = CellType.OPENSPACE;
             else cellType = CellType.OCCUPIED;
         }
 
-        public void UpdatePrefab()
+        private void UpdatePrefab()
         {
-            Debug.Log("Updated cell position: " + this.cellPos.x + "," + this.cellPos.y + "," + this.cellPos.z);
+            Debug.Log("Updated cell position: " + cellPos);
             //if(cellPrefab != null) Destroy(cellPrefab);
-            if (cellType == CellType.EMPTY) { cellPrefab = Instantiate(controller.EmptyCell, cellPos, Quaternion.identity); }
-            if (cellType == CellType.OCCUPIED) { cellPrefab = Instantiate(controller.OccupiedCell, cellPos, Quaternion.identity); }
-            if (cellType == CellType.OPENSPACE) { cellPrefab = Instantiate(controller.OpenSpaceCell, cellPos, Quaternion.identity); }
+            if (cellType == CellType.EMPTY) { this.cellPrefab = Instantiate(controller.EmptyCell, cellPos, Quaternion.identity); }
+            if (cellType == CellType.OCCUPIED) { this.cellPrefab = Instantiate(controller.OccupiedCell, cellPos, Quaternion.identity); }
+            if (cellType == CellType.OPENSPACE) { this.cellPrefab = Instantiate(controller.OpenSpaceCell, cellPos, Quaternion.identity); }
         }
 
-        public void UpdateColor()
+        private void UpdateColor()
         {
-            cellPrefab.GetComponent<Renderer>().material.color = Tools.GetColor(playerID);
+            this.cellPrefab.GetComponent<Renderer>().material.color = Tools.GetColor(playerID);
         }
 
         public void OnMouseDown()
