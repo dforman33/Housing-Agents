@@ -30,7 +30,7 @@ public class Plot3D : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            AddSomeOccupied((byte)10);
+            AddSomeOccupied();
         }
     }
 
@@ -53,7 +53,7 @@ public class Plot3D : MonoBehaviour
         }
     }
 
-    public void AddSomeOccupied(byte ID)
+    public void AddSomeOccupied()
     {
         for (int y = 0; y < height; y++)
         {

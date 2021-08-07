@@ -84,7 +84,7 @@ namespace Custom
                 plot.cells[coordinate.X, coordinate.Y, coordinate.Z].gameObject.GetComponent<Renderer>().material.color = Tools.GetColor(playerID);
         }
 
-        public void OnMouseDown()
+        private void OnMouseDown()
         {
             if (Input.GetKey(KeyCode.LeftShift)) 
                 UpdateCell(255);
