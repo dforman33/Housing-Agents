@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 //using Custom namespace
 using Custom;
 
@@ -15,10 +14,6 @@ public class HouseCreatorAgent : MonoBehaviour
     [HideInInspector] public byte houseID;
     [HideInInspector] public byte houseTargetSize;
     [HideInInspector] public byte houseCurrentSize;
-    
-    [SerializeField] private float MoveTime = 0.05f;
-    [HideInInspector] private float _timeUntilMove;
-
     /// <summary>
     /// At the agent initialization the game object at a random position.
     /// The house agent will loop a maximum of 100 times to attempt to occupy empty cells only. 
@@ -74,6 +69,7 @@ public class HouseCreatorAgent : MonoBehaviour
     private void OccupyCell()
     {
         plot.OccupyCell(agentCoordinate, houseID);
+        IsWithinHeight();
     }
     /// <summary>
     /// Stores the coordinate value in the agentCoordinate parameter. 
@@ -115,22 +111,6 @@ public class HouseCreatorAgent : MonoBehaviour
     private void ClampCoordinate()
     {
         agentCoordinate.ClampCoordinate(1, plot.width - 2, 1, plot.depth - 2, 1, plot.height - 2);
-
-    }
-
-    /// <summary>
-    /// Provides a slower move sensitivity to facilitate human player control. 
-    /// </summary>
-
-    void SlowMove(int directionID)
-    {
-        _timeUntilMove -= Time.deltaTime;
-        if (_timeUntilMove > 0.0f)
-        {
-            return;
-        }
-        MoveOne(directionID);
-        _timeUntilMove = MoveTime;
     }
 
         /// <summary>
@@ -159,6 +139,18 @@ public class HouseCreatorAgent : MonoBehaviour
         int result = plot.ReadSelfNeighbor(agentCoordinate, houseID);
         Debug.Log("Neighborhood self value: " + result);
         return result;
+    }
+
+    private bool IsWithinHeight()
+    {
+        bool isWithinHeight;
+        if (agentCoordinate.Y <= plot.heightMap[agentCoordinate.X, agentCoordinate.Z]) isWithinHeight = true;
+        else
+        {
+            isWithinHeight = false;
+            Debug.Log("Too high, consider a negative reward");
+        }
+        return isWithinHeight;
     }
 
 

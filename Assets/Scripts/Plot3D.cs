@@ -9,28 +9,40 @@ public class Plot3D : MonoBehaviour
     [Header("Initial state setting out")]
 
     public int width = 10; //x length
-    public int height = 10; //y height
+    public int height = 12; //y height
     public int depth = 10; //z length
     public float scale = 1;
 
+    public int minHeight = 10; //y height
+    public int maxHeight = 4; //y height
+
     [HideInInspector] public Cell3D[,,] cells;
+    [HideInInspector] public int [,] heightMap;
     [HideInInspector] public CellStateController controller;
 
     private void Awake()
     {
+        
         controller = GetComponent<CellStateController>();
         Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
         SetupBoard();
+        heightMap = new HeightMapGen(this, minHeight, maxHeight,2).heightMap;
         //AddSomeOccupied();
-        AddGround();
+    }
+
+    private void Start()
+    {
+        
     }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            AddSomeOccupied();
+            AddEmptySides();
+            AddSkyLine();
+            AddGround();
         }        
     }
 
@@ -54,6 +66,22 @@ public class Plot3D : MonoBehaviour
         }
     }
 
+    private void AddEmptySides()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (x == 0 || z ==0 || x == width -1 || z == depth -1)
+                        cells[x, y, z].UpdateCell(254); //Open Space
+                }
+            }
+        }
+
+    }
+
     private void AddGround()
     {
         for (int y = 0; y < height; y++)
@@ -62,13 +90,13 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (y == 0) cells[x, y, z].UpdateCell(255);
+                    if (y == 0) cells[x, y, z].UpdateCell(255); //Ground
                 }
             }
         }
-
     }
-    private void AddSomeOccupied()
+
+    private void AddSkyLine()
     {
         for (int y = 0; y < height; y++)
         {
@@ -76,7 +104,22 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if(y==0 || y ==1 || y ==2) cells[x, y, z].UpdateCell(5);
+                    if (y > heightMap[x,z]) 
+                        cells[x, y, z].UpdateCell(254); //Open Space
+                }
+            }
+        }
+
+    }
+    private void AddSomeOccupied()
+    {
+        for (int y = 1; y < height -1; y++)
+        {
+            for (int z = 1; z < depth-1; z++)
+            {
+                for (int x = 1; x < width-1; x++)
+                {
+                    if(y==1 || y ==2 || y ==2) cells[x, y, z].UpdateCell(5);
                     if (z > 5) cells[x, y, z].UpdateCell(20);
                     if (x==1 && z==5) cells[x, y, z].UpdateCell(14);
                 }
