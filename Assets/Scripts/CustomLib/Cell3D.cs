@@ -53,7 +53,8 @@ namespace Custom
         private void UpdateCellType()
         {
             if (playerID == 0) cellType = CellType.EMPTY;
-            else if (playerID == 255) cellType = CellType.OPENSPACE;
+            else if (playerID == 254) cellType = CellType.OPENSPACE;
+            else if (playerID == 255) cellType = CellType.GROUND;
             else cellType = CellType.OCCUPIED;
         }
 
@@ -74,6 +75,10 @@ namespace Custom
             {
                 SetNewCellInPlot(controller.OpenSpaceCell);
             }
+            if (cellType == CellType.GROUND)
+            {
+                SetNewCellInPlot(controller.GroundCell);
+            }
 
             if (oldGo != null) Destroy(oldGo);
         }
@@ -87,7 +92,7 @@ namespace Custom
         private void OnMouseDown()
         {
             if (Input.GetKey(KeyCode.LeftShift))
-                UpdateCell(255);
+                UpdateCell(254);
             else
                 UpdateCell(10);
         }

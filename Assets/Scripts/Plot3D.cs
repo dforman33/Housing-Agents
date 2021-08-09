@@ -22,7 +22,8 @@ public class Plot3D : MonoBehaviour
         Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
         SetupBoard();
-        AddSomeOccupied();
+        //AddSomeOccupied();
+        AddGround();
     }
 
     private void Update()
@@ -30,9 +31,7 @@ public class Plot3D : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             AddSomeOccupied();
-        }
-
-        
+        }        
     }
 
     public void SetupBoard()
@@ -55,7 +54,21 @@ public class Plot3D : MonoBehaviour
         }
     }
 
-    public void AddSomeOccupied()
+    private void AddGround()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (y == 0) cells[x, y, z].UpdateCell(255);
+                }
+            }
+        }
+
+    }
+    private void AddSomeOccupied()
     {
         for (int y = 0; y < height; y++)
         {
@@ -71,11 +84,17 @@ public class Plot3D : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Access the cell at the coordinate and occupies the cell for the playerID.
+    /// </summary>
     public void OccupyCell(Coordinate3D coord, byte playerID)
     {
         cells[coord.X, coord.Y, coord.Z].UpdateCell(playerID);
     }
 
+    /// <summary>
+    /// Returns false if empty and true if the cell is occupied by open space or a housing player.
+    /// </summary>
     public bool IsCellOccupied(Coordinate3D coord)
     {
         if (cells[coord.X, coord.Y, coord.Z].cellType == CellType.EMPTY)
@@ -84,5 +103,53 @@ public class Plot3D : MonoBehaviour
             return true;
     }
 
+    /// <summary>
+    /// Returns an array of 3 values corrrespoding to the empty, occupied and open space binary numbers. 
+    /// </summary>
+    public int [] GetNeighborhoodValue(Coordinate3D coord)
+    {
+        int[] result = new int [3];
+
+        result[0] = ReadSqrNeighbors(coord, CellType.EMPTY);
+        result[1] = ReadSqrNeighbors(coord, CellType.OCCUPIED);
+        result[2] = ReadSqrNeighbors(coord, CellType.OPENSPACE);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Returns binary number of neighbors with the specific cell type. 
+    /// </summary>
+    private int ReadSqrNeighbors(Coordinate3D coord, CellType celltype)
+    {
+        int result = 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Front]).cellType == celltype ? 1 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Back]).cellType == celltype ? 2 :0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Left]).cellType == celltype ? 4: 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Right]).cellType == celltype ? 8 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Up]).cellType == celltype ? 16 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Down]).cellType == celltype ? 32: 0;
+        return result;
+    }
+
+    /// <summary>
+    /// Returns binary number of neighbors with the same playerID.
+    /// </summary>
+    public int ReadSelfNeighbor(Coordinate3D coord, byte playerID)
+    {
+        int result = 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Front]).playerID == playerID ? 1 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Back]).playerID == playerID ? 2 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Left]).playerID == playerID ? 4 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Right]).playerID == playerID ? 8 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Up]).playerID == playerID ? 16 : 0;
+        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Down]).playerID == playerID ? 32 : 0;
+        return result;
+    }
+
+    public Cell3D CellInCoord(Coordinate3D coord)
+    {
+        return cells[coord.X, coord.Y, coord.Z];
+    }
 
 }

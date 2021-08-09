@@ -81,6 +81,7 @@ public class HouseCreatorAgent : MonoBehaviour
     void UpdateCoordinate()
     {
         agentCoordinate = Navigation.GetCoordinates3D(houseCreatorAgentPrefab.transform.localPosition, plot.scale);
+        ClampCoordinate();
     }
 
     /// <summary>
@@ -89,8 +90,9 @@ public class HouseCreatorAgent : MonoBehaviour
     private void RandomMove()
     {
         Vector3 pos = Navigation.GetPosition(Random.Range(0, plot.width), Random.Range(0, plot.height), Random.Range(0, plot.depth), plot.scale);
-        houseCreatorAgentPrefab.transform.localPosition = pos;
         UpdateCoordinate();
+        ClampCoordinate();
+        houseCreatorAgentPrefab.transform.localPosition = Navigation.GetPosition(agentCoordinate, plot.scale);
     }
 
     /// <summary>
@@ -101,10 +103,19 @@ public class HouseCreatorAgent : MonoBehaviour
     private void MoveOne(int directionID)
     {
         if (directionID >= 0 && directionID < Navigation.directions3D.Length)
+        {
             agentCoordinate += Navigation.directions3D[directionID];
+            ClampCoordinate();
+        }
         else
             return;
         houseCreatorAgentPrefab.transform.localPosition = Navigation.GetPosition(agentCoordinate, plot.scale);
+    }
+
+    private void ClampCoordinate()
+    {
+        agentCoordinate.ClampCoordinate(1, plot.width - 2, 1, plot.depth - 2, 1, plot.height - 2);
+
     }
 
     /// <summary>
@@ -136,6 +147,20 @@ public class HouseCreatorAgent : MonoBehaviour
         Debug.Log("Player " + houseID + " current size " + houseCurrentSize);
     }
 
+    private int[] GetNeighborhoodValue()
+    {
+        int [] result = plot.GetNeighborhoodValue(agentCoordinate);
+        Debug.Log("Neighborhood value. Empty: " + result[0] + " ,Occupied: "+ result[1] + " ,Open Space: "+ result[2]);
+        return result;
+    }
+
+    private int ReadSelfNeighbor()
+    {
+        int result = plot.ReadSelfNeighbor(agentCoordinate, houseID);
+        Debug.Log("Neighborhood self value: " + result);
+        return result;
+    }
+
 
     private void Start()
     {
@@ -145,20 +170,22 @@ public class HouseCreatorAgent : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.R)) RandomMove();
+        if (Input.GetKeyDown(KeyCode.R)) RandomMove();
 
-        if (Input.GetKey(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             OccupyCell();
             UpdateCurrentSize();
+            GetNeighborhoodValue();
+            ReadSelfNeighbor();
         }
 
-        if (Input.GetKey(KeyCode.W)) SlowMove((int)DirectionChoice.Front);
-        if (Input.GetKey(KeyCode.S)) SlowMove((int)DirectionChoice.Back);
-        if (Input.GetKey(KeyCode.A)) SlowMove((int)DirectionChoice.Left);
-        if (Input.GetKey(KeyCode.D)) SlowMove((int)DirectionChoice.Right);
-        if (Input.GetKey(KeyCode.E)) SlowMove((int)DirectionChoice.Up);
-        if (Input.GetKey(KeyCode.Q)) SlowMove((int)DirectionChoice.Down);
+        if (Input.GetKeyDown(KeyCode.W)) MoveOne((int)DirectionChoice.Front);
+        if (Input.GetKeyDown(KeyCode.S)) MoveOne((int)DirectionChoice.Back);
+        if (Input.GetKeyDown(KeyCode.A)) MoveOne((int)DirectionChoice.Left);
+        if (Input.GetKeyDown(KeyCode.D)) MoveOne((int)DirectionChoice.Right);
+        if (Input.GetKeyDown(KeyCode.E)) MoveOne((int)DirectionChoice.Up);
+        if (Input.GetKeyDown(KeyCode.Q)) MoveOne((int)DirectionChoice.Down);
 
     }
 }

@@ -93,6 +93,8 @@ namespace Custom
             return GetCoordinates3D(worldPos, cellSize, Vector3.zero);
         }
 
+
+
         public static bool IsWithinPlot(Vector3 position, float cellSize, Vector3 originPos, int xMax, int zMax)
         {
             if (position.x > originPos.x && position.x < (originPos.x + xMax * cellSize) && position.z > originPos.z && position.z < (originPos.z + zMax * cellSize))

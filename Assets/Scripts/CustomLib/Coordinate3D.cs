@@ -48,5 +48,32 @@ namespace Custom
             return new Coordinate3D(coordinate1.X - coordinate2.X, coordinate1.Y - coordinate2.Y,coordinate1.Z - coordinate2.Z);
         }
 
+        public void ClampCoordinate(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
+        {
+            if (X < minX) X = minX;
+            if (X > maxX) X = maxX;
+
+            if (Y < minY) Y = minY;
+            if (Y > maxY) Y = maxY;
+
+            if (Z < minZ) Z = minZ;
+            if (Z > maxZ) Z = maxZ;
+        }
+
+
+        public static Coordinate3D ClampCoordinate(Coordinate3D coordinate, int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
+        {
+            if (coordinate.X < minX) coordinate.X = minX;
+            if (coordinate.X > maxX) coordinate.X = maxX;
+
+            if (coordinate.Y < minY) coordinate.Y = minY;
+            if (coordinate.Y > maxY) coordinate.Y = maxY;
+
+            if (coordinate.X < minZ) coordinate.Z = minZ;
+            if (coordinate.X > maxZ) coordinate.Z = maxZ;
+
+            return coordinate;
+        }
+
     }
 }
