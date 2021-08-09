@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using Custom namespace
 using Custom;
 
 public class Plot3D : MonoBehaviour
@@ -11,19 +12,17 @@ public class Plot3D : MonoBehaviour
     public int height = 10; //y height
     public int depth = 10; //z length
     public float scale = 1;
-    public Vector3 plotOrigin = new Vector3(0, 0, 0);
 
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public CellStateController controller;
 
-    private void Start()
+    private void Awake()
     {
         controller = GetComponent<CellStateController>();
         Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
-
         SetupBoard();
-        
+        AddSomeOccupied();
     }
 
     private void Update()
@@ -32,6 +31,8 @@ public class Plot3D : MonoBehaviour
         {
             AddSomeOccupied();
         }
+
+        
     }
 
     public void SetupBoard()
@@ -43,7 +44,8 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var newGo = Instantiate(controller.EmptyCell, new Vector3 (scale * x, scale * y, scale * z), Quaternion.identity);
+                    var pos = new Vector3(scale * x, scale * y, scale * z) + transform.position;
+                    var newGo = Instantiate(controller.EmptyCell, pos, Quaternion.identity);
                     newGo.name = "Cell(" +x+","+y+"," + z + ")";
                     newGo.transform.parent = transform;
                     cells[x, y, z] = newGo.GetComponent<Cell3D>();
@@ -61,26 +63,25 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (y == 5 && x ==5)
-                    {
-                        cells[x, y, z].UpdateCell(20);
-                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
-                    }
-                    if (y == 1 && x == 1)
-                    {
-                        cells[x, y, z].UpdateCell(30);
-                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
-                    }
-                    if (x == 9 && z == 1)
-                    {
-                        cells[x, y, z].UpdateCell(40);
-                        //Debug.Log("Updated cell position: " + cells[x, y, z].cellPos + " to ID: " + cells[x, y, z].playerID);
-                    }
+                    if(y==0 || y ==1 || y ==2) cells[x, y, z].UpdateCell(5);
+                    if (z > 5) cells[x, y, z].UpdateCell(20);
+                    if (x==1 && z==5) cells[x, y, z].UpdateCell(14);
                 }
             }
         }
+    }
 
+    public void OccupyCell(Coordinate3D coord, byte playerID)
+    {
+        cells[coord.X, coord.Y, coord.Z].UpdateCell(playerID);
+    }
 
+    public bool IsCellOccupied(Coordinate3D coord)
+    {
+        if (cells[coord.X, coord.Y, coord.Z].cellType == CellType.EMPTY)
+            return false;
+        else
+            return true;
     }
 
 

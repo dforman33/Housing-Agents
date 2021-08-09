@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 1699099531}
   - component: {fileID: 1699099530}
   - component: {fileID: 1699099529}
+  - component: {fileID: 1699099532}
   m_Layer: 0
   m_Name: Plot3D
   m_TagString: Untagged
@@ -275,12 +276,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1699099528}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.0467167, y: 2.0243168, z: 7.8715105}
+  m_LocalPosition: {x: 2, y: 2, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1699099532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1699099528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed988c71f58da942a525a59193ab451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  houseCreatorAgentPrefab: {fileID: 6120623006961090121, guid: 386567cbbe7eb924bb4187da58c9ded4, type: 3}
 --- !u!1 &1927249230
 GameObject:
   m_ObjectHideFlags: 0

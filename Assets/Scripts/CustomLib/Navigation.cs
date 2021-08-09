@@ -5,12 +5,23 @@ using System;
 
 namespace Custom
 {
+    public enum DirectionChoice
+    {
+        Right = 0,
+        Left = 1,
+        Front = 2,
+        Back = 3,
+        Up = 4,
+        Down = 5,
+    }
+
     public static class Navigation
     {
         public static Coordinate2D[] directions2D = new Coordinate2D[]
         {
         new Coordinate2D(1,0),
         new Coordinate2D(0,1),
+
         new Coordinate2D(-1,0),
         new Coordinate2D(0,-1)
         };
@@ -19,11 +30,16 @@ namespace Custom
         {
             new Coordinate3D(1,0,0),
             new Coordinate3D(-1,0,0),
+
+            new Coordinate3D(0,0,1),
+            new Coordinate3D(0,0,-1), 
+            
             new Coordinate3D(0,1,0),
             new Coordinate3D(0,-1,0),
-            new Coordinate3D(0,0,1),
-            new Coordinate3D(0,0,-1)
         };
+
+      
+
 
 
         /* NAVIGATION TOOLS
@@ -42,6 +58,21 @@ namespace Custom
             return new Vector3(x, y, z) * cellSize + originPos;
         }
 
+        public static Vector3 GetPosition(int x, int y, int z, float cellSize)
+        {
+            return GetPosition(x, y, z, cellSize, Vector3.zero);
+        }
+
+        public static Vector3 GetPosition(Coordinate3D coordinate, float cellSize, Vector3 originPos)
+        {
+            return GetPosition(coordinate.X, coordinate.Y, coordinate.Z, cellSize, originPos);
+        }
+
+        public static Vector3 GetPosition(Coordinate3D coordinate, float cellSize)
+        {
+            return GetPosition(coordinate.X, coordinate.Y, coordinate.Z, cellSize, Vector3.zero);
+        }
+
         public static Coordinate2D GetCoordinates2D(Vector3 worldPos, float cellSize, Vector3 originPos)
         {
             int x = Mathf.FloorToInt((worldPos.x - originPos.x) / cellSize);
@@ -51,10 +82,15 @@ namespace Custom
 
         public static Coordinate3D GetCoordinates3D(Vector3 worldPos, float cellSize, Vector3 originPos)
         {
-            int x = Mathf.FloorToInt((worldPos.x - originPos.x) / cellSize); 
-            int y = Mathf.FloorToInt((worldPos.y - originPos.y) / cellSize);
-            int z = Mathf.FloorToInt((worldPos.z - originPos.z) / cellSize);
+            int x = Mathf.RoundToInt((worldPos.x - originPos.x) / cellSize); 
+            int y = Mathf.RoundToInt((worldPos.y - originPos.y) / cellSize);
+            int z = Mathf.RoundToInt((worldPos.z - originPos.z) / cellSize);
             return new Coordinate3D(x, y, z);
+        }
+
+        public static Coordinate3D GetCoordinates3D(Vector3 worldPos, float cellSize)
+        {
+            return GetCoordinates3D(worldPos, cellSize, Vector3.zero);
         }
 
         public static bool IsWithinPlot(Vector3 position, float cellSize, Vector3 originPos, int xMax, int zMax)

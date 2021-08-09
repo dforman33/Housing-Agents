@@ -34,87 +34,78 @@ namespace Custom
                 case 0: //initial state
                     result = Color.white;
                     break;
-                //AGENT 1
-                case 10:
+                case 1:
                     result = HexToRGB("#03045e"); //Dark blue
                     break;
-                case 11:
+                case 2:
                     result = HexToRGB("#023e8a");
                     break;
-                case 12:
+                case 3:
                     result = HexToRGB("#0077b6");
                     break;
-                case 13:
+                case 4:
                     result = HexToRGB("#0096c7");
                     break;
-                case 14:
+                case 5:
                     result = HexToRGB("#00b4d8");
                     break;
-                case 15:
+                case 6:
                     result = HexToRGB("#48cae4");
                     break;
-
-                //AGENT 2
-                case 20:
+                case 7:
                     result = HexToRGB("#1b4332"); //Dark green
                     break;
-                case 21:
+                case 8:
                     result = HexToRGB("#2d6a4f");
                     break;
-                case 22:
+                case 9:
                     result = HexToRGB("#40916c");
                     break;
-                case 23:
+                case 10:
                     result = HexToRGB("#52b788");
                     break;
-                case 24:
+                case 11:
                     result = HexToRGB("#74c69d");
                     break;
-                case 25:
+                case 12:
                     result = HexToRGB("#95d5b2");
                     break;
-
-                //AGENT 3
-                case 30:
+                case 13:
                     result = HexToRGB("#800f2f"); //Dark red
                     break;
-                case 31:
+                case 14:
                     result = HexToRGB("#a4133c");
                     break;
-                case 32:
+                case 15:
                     result = HexToRGB("#c9184a");
                     break;
-                case 33:
+                case 16:
                     result = HexToRGB("#ff4d6d");
                     break;
-                case 34:
+                case 17:
                     result = HexToRGB("#ff758f");
                     break;
-                case 35:
+                case 18:
                     result = HexToRGB("#ff8fa3");
                     break;
-
-                //AGENT 4
-                case 40:
+                case 19:
                     result = HexToRGB("#ff6d00"); //Dark orange
                     break;
-                case 41:
+                case 20:
                     result = HexToRGB("#ff7900");
                     break;
-                case 42:
+                case 21:
                     result = HexToRGB("#ff8500");
                     break;
-                case 43:
+                case 22:
                     result = HexToRGB("#ff9100");
                     break;
-                case 44:
+                case 23:
                     result = HexToRGB("#ff9e00");
                     break;
-                case 45:
+                case 24:
                     result = HexToRGB("#ffaa00");
                     break;
-
-                //NOT AVAILABLE
                 default:
                     result = Color.white;
                     break;

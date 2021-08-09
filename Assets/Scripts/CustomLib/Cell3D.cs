@@ -1,27 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //using Custom namespace
-using Custom;
 
-
-namespace Custom 
+namespace Custom
 {
     public class Cell3D : MonoBehaviour
     {
         //the state indicates the player that occupies the cell or if this is public space
         [HideInInspector] public Coordinate3D coordinate;
+
         [HideInInspector] public Vector3 cellPos;
         [HideInInspector] public float cellScale;
 
         [HideInInspector] public CellType cellType;
+
         //[HideInInspector] public GameObject cellPrefab;
-        [HideInInspector] public bool isFixed;         
+        [HideInInspector] public bool isFixed;
+
         [HideInInspector] public byte playerID;
 
         [Header("Connections to main plot")]
         [HideInInspector] public CellStateController controller;
+
         [HideInInspector] public Plot3D plot;
 
         public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot, CellStateController controller, byte playerID)
@@ -33,7 +33,7 @@ namespace Custom
             isFixed = false;
             cellPos = transform.position;
             UpdatePlayerID(playerID);
-            Debug.Log("Cell position: " + cellPos+ " and cell name: " + this.name);
+            Debug.Log("Cell position: " + cellPos + " and cell name: " + this.name);
             UpdateCellType();
         }
 
@@ -62,20 +62,20 @@ namespace Custom
 
             GameObject oldGo = gameObject;
 
-            
-            if (cellType == CellType.EMPTY) {
+            if (cellType == CellType.EMPTY)
+            {
                 SetNewCellInPlot(controller.EmptyCell);
-
             }
-            if (cellType == CellType.OCCUPIED) {
+            if (cellType == CellType.OCCUPIED)
+            {
                 SetNewCellInPlot(controller.OccupiedCell);
             }
-            if (cellType == CellType.OPENSPACE) {
+            if (cellType == CellType.OPENSPACE)
+            {
                 SetNewCellInPlot(controller.OpenSpaceCell);
             }
 
             if (oldGo != null) Destroy(oldGo);
-
         }
 
         private void UpdateColor()
@@ -86,13 +86,13 @@ namespace Custom
 
         private void OnMouseDown()
         {
-            if (Input.GetKey(KeyCode.LeftShift)) 
+            if (Input.GetKey(KeyCode.LeftShift))
                 UpdateCell(255);
             else
                 UpdateCell(10);
         }
 
-        void SetNewCellInPlot(GameObject prefabType)
+        private void SetNewCellInPlot(GameObject prefabType)
         {
             //this is to simplify the routine of updating the prefab
             var newGo = Instantiate(prefabType, cellPos, Quaternion.identity);
@@ -101,12 +101,6 @@ namespace Custom
             var newCell = newGo.GetComponent<Cell3D>();
             newCell.SetUpCell(coordinate.X, coordinate.Y, coordinate.Z, plot, controller, playerID);
             plot.cells[coordinate.X, coordinate.Y, coordinate.Z] = newCell;
-
         }
-
-
-
     }
 }
-
-
