@@ -18,7 +18,6 @@ public class RayCreate : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        int layerMask = obj.layer;
 
         if (Input.GetMouseButtonDown(0))
         {

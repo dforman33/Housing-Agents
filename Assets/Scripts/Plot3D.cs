@@ -13,8 +13,8 @@ public class Plot3D : MonoBehaviour
     public int depth = 10; //z length
     public float scale = 1;
 
-    public int minHeight = 10; //y height
-    public int maxHeight = 4; //y height
+    public int minHeight = 4; //y height
+    public int maxHeight = 10; //y height
 
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public int [,] heightMap;
@@ -22,29 +22,29 @@ public class Plot3D : MonoBehaviour
 
     private void Awake()
     {
-        
+
         controller = GetComponent<CellStateController>();
         Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
         SetupBoard();
-        heightMap = new HeightMapGen(this, minHeight, maxHeight,2).heightMap;
+        heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
         //AddSomeOccupied();
     }
 
-    private void Start()
-    {
-        
-    }
+    //private void Start()
+    //{
 
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            AddEmptySides();
-            AddSkyLine();
-            AddGround();
-        }        
-    }
+    //}
+
+    //private void Update()
+    //{
+    //    if (Input.GetKey(KeyCode.Space))
+    //    {
+    //        AddEmptySides();
+    //        AddSkyLine();
+    //        AddGround();
+    //    }        
+    //}
 
     /// <summary>
     /// Method that instantiates the necessary parameters for the plot3D and generates a three-dimensional array of cells to record and assess moves from players.
@@ -74,7 +74,7 @@ public class Plot3D : MonoBehaviour
     /// It should be called before the AddGround() and AddSkyLine() methods.
     /// </summary>
     /// <returns>Open space cells at the four sides of the array.</returns>
-    private void AddEmptySides()
+    public void AddEmptySides()
     {
         for (int y = 0; y < height; y++)
         {
@@ -94,7 +94,7 @@ public class Plot3D : MonoBehaviour
     /// It should be called after AddEmptySide() and before the AddSkyLine() methods.
     /// </summary>
     /// <returns>Prefabs at ground floor for display purposes.</returns>
-    private void AddGround()
+    public void AddGround()
     {
         for (int y = 0; y < height; y++)
         {
@@ -112,7 +112,7 @@ public class Plot3D : MonoBehaviour
     /// It should be called after AddGround() and AddEmptySide() methods.
     /// </summary>
     /// <returns>Open space positions above the skyline generetaed by the heightmap.</returns>
-    private void AddSkyLine()
+    public void AddSkyLine()
     {
         for (int y = 0; y < height; y++)
         {
@@ -129,7 +129,7 @@ public class Plot3D : MonoBehaviour
     }
 
     /// <returns>Returns hard coded positions to test the class behaviour.</returns>
-    private void AddSomeOccupied()
+    public void AddSomeOccupied()
     {
         for (int y = 1; y < height -1; y++)
         {
@@ -137,9 +137,10 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 1; x < width-1; x++)
                 {
-                    if(y==1 || y ==2 || y ==2) cells[x, y, z].UpdateCell(5);
-                    if (z > 5) cells[x, y, z].UpdateCell(20);
-                    if (x==1 && z==5) cells[x, y, z].UpdateCell(14);
+                    if(x > 3 && z > 3 && z<7 && x <7 && y <7) cells[x, y, z].UpdateCell(5);
+                    if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9) cells[x, y, z].UpdateCell(20);
+                    //if (z > 5) cells[x, y, z].UpdateCell(20);
+
                 }
             }
         }

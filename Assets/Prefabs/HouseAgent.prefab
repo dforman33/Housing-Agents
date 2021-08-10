@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6120623006961090122}
   - component: {fileID: -5916382727096380251}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HouseAgent
   m_TagString: Agents
   m_Icon: {fileID: 0}

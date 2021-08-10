@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5001368510712321904}
   - component: {fileID: 6683870025868185326}
   - component: {fileID: 3266567871073064662}
-  m_Layer: 8
+  m_Layer: 2
   m_Name: AgentHousePrefab
   m_TagString: CellPrefabs
   m_Icon: {fileID: 0}
@@ -112,4 +112,4 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -1702568245640127655, guid: 8e4ec81eb31f64c4d928d0a062b3998c, type: 3}
+  m_Mesh: {fileID: -1702568245640127655, guid: 3728779ec78f3bf449257c56564cd78f, type: 3}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7834795032041199236}
   - component: {fileID: 3209929738873055226}
   - component: {fileID: 4018670060909823719}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: EmptySpacePrefab
   m_TagString: CellPrefabs
   m_Icon: {fileID: 0}
