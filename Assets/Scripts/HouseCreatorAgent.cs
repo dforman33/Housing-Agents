@@ -5,6 +5,11 @@ using UnityEngine;
 using Custom;
 
 
+/// <summary>
+/// A house agent to generate the aggregation of one house unit. 
+/// It controls the target size and other paramenters to optimise its own benefit.
+/// </summary>
+
 public class HouseCreatorAgent : MonoBehaviour
 {
     public GameObject houseCreatorAgentPrefab;
@@ -14,6 +19,7 @@ public class HouseCreatorAgent : MonoBehaviour
     [HideInInspector] public byte houseID;
     [HideInInspector] public byte houseTargetSize;
     [HideInInspector] public byte houseCurrentSize;
+    
     /// <summary>
     /// At the agent initialization the game object at a random position.
     /// The house agent will loop a maximum of 100 times to attempt to occupy empty cells only. 
@@ -59,6 +65,8 @@ public class HouseCreatorAgent : MonoBehaviour
     /// <summary>
     /// If no house target size is provided the value is set to 10 by default. 
     /// </summary>
+    /// <param name="houseID">This is the housing agent's unique ID.</param>
+
     private void AgentInit(byte houseID)
     {
         AgentInit(houseID, 10);
@@ -72,11 +80,23 @@ public class HouseCreatorAgent : MonoBehaviour
         IsWithinHeight();
     }
     /// <summary>
-    /// Stores the coordinate value in the agentCoordinate parameter. 
+    /// Stores the coordinate value in the agentCoordinate parameter.
+    /// A clamp function ensures that the agent remains inside the edges of the array.
     /// </summary>
     void UpdateCoordinate()
     {
         agentCoordinate = Navigation.GetCoordinates3D(houseCreatorAgentPrefab.transform.localPosition, plot.scale);
+        ClampCoordinate();
+    }
+
+    /// <summary>
+    /// Stores the vector3 position as an agentCoordinate parameter. 
+    /// A clamp function ensures that the agent remains inside the edges of the array.
+    /// </summary>
+    /// <param name="position">A world position translated into a coordinate within the array.</param>
+    void UpdateCoordinate(Vector3 position)
+    {
+        agentCoordinate = Navigation.GetCoordinates3D(position, plot.scale);
         ClampCoordinate();
     }
 
@@ -86,8 +106,7 @@ public class HouseCreatorAgent : MonoBehaviour
     private void RandomMove()
     {
         Vector3 pos = Navigation.GetPosition(Random.Range(0, plot.width), Random.Range(0, plot.height), Random.Range(0, plot.depth), plot.scale);
-        UpdateCoordinate();
-        ClampCoordinate();
+        UpdateCoordinate(pos);
         houseCreatorAgentPrefab.transform.localPosition = Navigation.GetPosition(agentCoordinate, plot.scale);
     }
 
@@ -95,7 +114,7 @@ public class HouseCreatorAgent : MonoBehaviour
     /// Basic move functionality, inputs six possible integers (between 0 and 5) each corresponding with a possible direction in the space. 
     /// It moves by one cell in the input direction. 
     /// </summary>
-
+    /// <param name="directionID">One of the possible six directions, to return a valid move must be between 0 and 5.</param>
     private void MoveOne(int directionID)
     {
         if (directionID >= 0 && directionID < Navigation.directions3D.Length)
@@ -108,15 +127,19 @@ public class HouseCreatorAgent : MonoBehaviour
         houseCreatorAgentPrefab.transform.localPosition = Navigation.GetPosition(agentCoordinate, plot.scale);
     }
 
+    /// <summary>
+    /// Ensures that no move falls outside the three dimensional grid that defines the plot3D.
+    /// It also makes sure that the agent does not occupy the edge conditions to facilitate the reading of the cell's neighborhood.
+    /// </summary>
     private void ClampCoordinate()
     {
         agentCoordinate.ClampCoordinate(1, plot.width - 2, 1, plot.depth - 2, 1, plot.height - 2);
     }
 
-        /// <summary>
-        /// Calculates the total number of cells occupied by the agent house. 
-        /// </summary>
-        private void UpdateCurrentSize()
+    /// <summary>
+    /// Calculates the total number of cells occupied by the agent house. 
+    /// </summary>
+    private void UpdateCurrentSize()
     {
         byte count = 0;
         foreach (var cell in plot.cells)
@@ -127,6 +150,12 @@ public class HouseCreatorAgent : MonoBehaviour
         Debug.Log("Player " + houseID + " current size " + houseCurrentSize);
     }
 
+
+    /// <summary>
+    /// returns an array of size three invoking the GetNeighborhoodValue() method within the plot3D class.
+    /// </summary>
+    /// <returns> 
+    /// [0] returns the empty positions. [1] returns the occupied positions. [2] returns the open space positions.</returns>
     private int[] GetNeighborhoodValue()
     {
         int [] result = plot.GetNeighborhoodValue(agentCoordinate);

@@ -144,7 +144,7 @@ namespace Custom
         /// <param name="x2">The second x coordinate.</param>
         /// <param name="y1">The first y coordinate.</param>
         /// <param name="y2">The second y coordinate.</param>
-        ///  /// <returns>The Euclidean distance between (x1, y1) and (x2, y2)</returns>
+        /// <returns>The Euclidean distance between (x1, y1) and (x2, y2)</returns>
         private static int CalculateEuclideanDistance(int x1, int x2, int y1, int y2)
         {
             return (int)Mathf.Sqrt(Mathf.Pow(x1 - x2, 2) + Mathf.Pow(y1 - y2, 2));
@@ -158,7 +158,7 @@ namespace Custom
         /// <param name="oldMax">The origin upper bound.</param>
         /// <param name="newLow">The target lower bound.</param>
         /// <param name="newMax">The target upper bound.</param>
-        ///  /// <returns>The remapped float value given the origin and target bounds.</returns>
+        /// <returns>The remapped float value given the origin and target bounds.</returns>
         private static float RemapFloats(float value, float oldMin, float oldMax, float newLow, float newMax)
         {
             return newLow + (value - oldMin) * (newMax - newLow) / (oldMax - oldMin);
