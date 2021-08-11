@@ -26,6 +26,8 @@ public class SunCastingPlot : Plot3D
 
     private void Start()
     {
+        AddEmptySides();
+        AddSkyLine();
         AddGround();
         DisplayOpenSpace();
     }

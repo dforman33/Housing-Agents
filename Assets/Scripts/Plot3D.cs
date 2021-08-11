@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 //using Custom namespace
 using Custom;
 
@@ -19,6 +20,8 @@ public class Plot3D : MonoBehaviour
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public int [,] heightMap;
     [HideInInspector] public CellStateController controller;
+
+    //public event EventHandler OnCellAlreadyOccupied; 
 
     private void Awake()
     {
