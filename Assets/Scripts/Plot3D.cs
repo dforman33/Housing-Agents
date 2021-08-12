@@ -8,13 +8,13 @@ public class Plot3D : MonoBehaviour
 {
     [Header("Initial state setting out")]
 
-    public int width = 10; //x length
-    public int height = 12; //y height
-    public int depth = 10; //z length
+    public int width = 9; //x length
+    public int height = 11; //y height
+    public int depth = 9; //z length
     public float scale = 1;
 
-    public int minHeight = 4; //y height
-    public int maxHeight = 10; //y height
+    public int minHeight = 3; //y height
+    public int maxHeight = 8; //y height
 
     [SerializeField] private static Vector3 sunReverseDirection = new Vector3(0.1f, 1, 0.1f);
     [SerializeField] public bool addHardCodedOccupied = true;
@@ -73,6 +73,7 @@ public class Plot3D : MonoBehaviour
     public void AddPlotConstraints()
     {
         CleanBoard();
+        maxHeight = maxHeight <= height - 2 ? maxHeight : height - 2;
         heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
         openGFMap = new OpenGFGenerator(this, 1, 75).openGFMap;
 

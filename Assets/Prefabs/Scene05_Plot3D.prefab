@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8316973345452916854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8316973345452916850}
+  - component: {fileID: 8316973345452916849}
+  - component: {fileID: 8316973345452916848}
+  - component: {fileID: 8316973345452916855}
+  m_Layer: 0
+  m_Name: Scene05_Plot3D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8316973345452916850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316973345452916854}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8316973345452916849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316973345452916854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6714fed287163b4f954ca13107b9afe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EmptyCell: {fileID: 1070282286005765536, guid: 15c70a940cb289c48a82f7655d73b484, type: 3}
+  OccupiedCell: {fileID: 5872526976459809534, guid: 87de2efbd46005644877dda4cb03afcc, type: 3}
+  OpenSpaceCell: {fileID: 1070282286005765536, guid: fadaf39a86e91584b872cb2fa2f217cb, type: 3}
+  GroundCell: {fileID: 1070282286005765536, guid: f7bbf97ea5d326d43af482113741980e, type: 3}
+  HouseCreator: {fileID: 0}
+--- !u!114 &8316973345452916848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316973345452916854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d9f797ae42559e4ab31b496e8ca2de6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 10
+  height: 10
+  depth: 10
+  scale: 1
+  minHeight: 10
+  maxHeight: 4
+  addHardCodedOccupied: 1
+  controller: {fileID: 0}
+--- !u!114 &8316973345452916855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8316973345452916854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed988c71f58da942a525a59193ab451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  houseCreatorAgentPrefab: {fileID: 6120623006961090121, guid: 386567cbbe7eb924bb4187da58c9ded4, type: 3}
+  houseID: 0
+  houseTargetSize: 0
+  houseCurrentSize: 0
