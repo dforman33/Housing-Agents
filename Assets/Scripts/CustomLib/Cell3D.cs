@@ -1,7 +1,5 @@
 using UnityEngine;
 
-//using Custom namespace
-
 namespace Custom
 {
     public class Cell3D : MonoBehaviour

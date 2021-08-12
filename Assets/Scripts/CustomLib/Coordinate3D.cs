@@ -48,19 +48,69 @@ namespace Custom
             return new Coordinate3D(coordinate1.X - coordinate2.X, coordinate1.Y - coordinate2.Y,coordinate1.Z - coordinate2.Z);
         }
 
-        public void ClampCoordinate(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
+        /// <summary>
+        /// Ensures the coordinate is clamped within certain values.
+        /// </summary>
+        /// <param name="minX">Minimum x value.</param>
+        /// <param name="maxX">Maximum x value.</param>
+        /// <param name="minY">Minimum y value.</param>
+        /// <param name="maxY">Maximum y value.</param>
+        /// <param name="minZ">Minimum z value.</param>
+        /// <param name="maxZ">Maximum z value.</param>
+        /// <returns>The out parameter IsClamped returns true if clamp is triggered.</returns>
+
+        public void ClampCoordinate(int minX, int maxX, int minY, int maxY, int minZ, int maxZ, out bool IsClamped)
         {
-            if (X < minX) X = minX;
-            if (X > maxX) X = maxX;
+            bool isClamped = false;
 
-            if (Y < minY) Y = minY;
-            if (Y > maxY) Y = maxY;
+            if (X < minX) { X = minX; isClamped = true; }
+            if (X > maxX) {X = maxX; isClamped = true; }
 
-            if (Z < minZ) Z = minZ;
-            if (Z > maxZ) Z = maxZ;
+            if (Y < minY) {Y = minY; isClamped = true; }
+            if (Y > maxY) {Y = maxY; isClamped = true; }
+
+            if (Z < minZ) {Z = minZ; isClamped = true; }
+            if (Z > maxZ) {Z = maxZ; isClamped = true; }
+
+            IsClamped = isClamped;
         }
 
+        /// <summary>
+        /// Ensures the coordinate is clamped within certain values.
+        /// </summary>
+        /// <param name="minX">Minimum x value.</param>
+        /// <param name="maxX">Maximum x value.</param>
+        /// <param name="minY">Minimum y value.</param>
+        /// <param name="maxY">Maximum y value.</param>
+        /// <param name="minZ">Minimum z value.</param>
+        /// <param name="maxZ">Maximum z value.</param>
+        /// <returns></returns>
 
+        public void ClampCoordinate(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
+        {
+
+            if (X < minX) { X = minX; }
+            if (X > maxX) { X = maxX; }
+
+            if (Y < minY) { Y = minY; }
+            if (Y > maxY) { Y = maxY; }
+
+            if (Z < minZ) { Z = minZ; }
+            if (Z > maxZ) { Z = maxZ; }
+
+        }
+
+        /// <summary>
+        /// Static method that ensures the coordinate is clamped within certain values.
+        /// </summary>
+        /// <param name="coordinate">The coordinate to clamp.</param>
+        /// <param name="minX">Minimum x value.</param>
+        /// <param name="maxX">Maximum x value.</param>
+        /// <param name="minY">Minimum y value.</param>
+        /// <param name="maxY">Maximum y value.</param>
+        /// <param name="minZ">Minimum z value.</param>
+        /// <param name="maxZ">Maximum z value.</param>
+        /// <returns>A clamped coordinate.</returns>
         public static Coordinate3D ClampCoordinate(Coordinate3D coordinate, int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
         {
             if (coordinate.X < minX) coordinate.X = minX;

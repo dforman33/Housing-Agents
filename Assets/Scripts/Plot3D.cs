@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 //using Custom namespace
 using Custom;
 
@@ -17,43 +16,22 @@ public class Plot3D : MonoBehaviour
     public int minHeight = 4; //y height
     public int maxHeight = 10; //y height
 
+    [SerializeField] private static Vector3 sunReverseDirection = new Vector3(0.1f, 1, 0.1f);
+    [SerializeField] public bool addHardCodedOccupied = true;
+
     [HideInInspector] public Cell3D[,,] cells;
-    [HideInInspector] public int [,] heightMap;
+    [HideInInspector] public int[,] heightMap;
+    [HideInInspector] public int[,] openGFMap;
     [HideInInspector] public CellStateController controller;
 
-    //public event EventHandler OnCellAlreadyOccupied; 
-
-    private void Awake()
-    {
-
-        controller = GetComponent<CellStateController>();
-        Camera.main.transform.position = new Vector3(-6f, 15.5f, -6f);
-        Camera.main.transform.rotation = Quaternion.Euler(new Vector3(33, 45, 0));
-        SetupBoard();
-        heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
-        //AddSomeOccupied();
-    }
-
-    //private void Start()
-    //{
-
-    //}
-
-    //private void Update()
-    //{
-    //    if (Input.GetKey(KeyCode.Space))
-    //    {
-    //        AddEmptySides();
-    //        AddSkyLine();
-    //        AddGround();
-    //    }        
-    //}
 
     /// <summary>
     /// Method that instantiates the necessary parameters for the plot3D and generates a three-dimensional array of cells to record and assess moves from players.
     /// </summary>
     public void SetupBoard()
     {
+        controller = GetComponent<CellStateController>();
+
         cells = new Cell3D[width, height, depth];
         for (int y = 0; y < height; y++)
         {
@@ -61,15 +39,48 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var pos = new Vector3(scale * x, scale * y, scale * z) + transform.position;
+                    var pos = new Vector3(scale * x, scale * y, scale * z) + transform.localPosition;
                     var newGo = Instantiate(controller.EmptyCell, pos, Quaternion.identity);
-                    newGo.name = "Cell(" +x+","+y+"," + z + ")";
+                    newGo.name = "Cell(" + x + "," + y + "," + z + ")";
                     newGo.transform.parent = transform;
                     cells[x, y, z] = newGo.GetComponent<Cell3D>();
-                    cells[x, y, z].SetUpCell(x, y, z, this, controller,0);
+                    cells[x, y, z].SetUpCell(x, y, z, this, controller, 0);
                 }
             }
         }
+    }
+
+    public void CleanBoard()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    {
+                        if (cells[x, y, z] != null) cells[x, y, z].UpdateCell(0);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Generates the ground floor, skyline and sets the edge cells as open space
+    /// </summary>
+    /// <returns>Open space cells at the four sides of the array.</returns>
+    public void AddPlotConstraints()
+    {
+        CleanBoard();
+        heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
+        openGFMap = new OpenGFGenerator(this, 1, 75).openGFMap;
+
+        AddEmptySides();
+        AddSkyLine();
+        AddGround();
+        DisplayOpenSpace();
+        if(addHardCodedOccupied) AddSomeOccupied();
     }
 
     /// <summary>
@@ -85,12 +96,11 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (x == 0 || z ==0 || x == width -1 || z == depth -1)
+                    if (x == 0 || z == 0 || x == width - 1 || z == depth - 1)
                         cells[x, y, z].UpdateCell(254); //Open Space
                 }
             }
         }
-
     }
     /// <summary>
     /// Method to add the open space cells above the skyline defined by the heightmap.
@@ -105,11 +115,46 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (y == 0) cells[x, y, z].UpdateCell(255); //Ground
+                    if (y == 0)
+                    {
+                        cells[x, y, z].UpdateCell(255); //Ground
+                    }
                 }
             }
         }
     }
+
+    /// <summary>
+    /// Changes the color of the open space at Ground Floor and genereates open space cells above.
+    /// </summary>
+    /// <returns></returns>
+    public void DisplayOpenSpace()
+    {
+        int count = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (openGFMap[x, z] == 1 && y == 0)
+                    {
+                        cells[x, 0, z].UpdateColor(new Color(.95f, .95f, .95f)); //Open Space at Ground Floor
+                        count++;
+                    }
+
+                    if (openGFMap[x, z] == 1 && y > 0)
+                    {
+                        cells[x, y, z].UpdateCell(254); //Open Space
+                    }
+
+                }
+            }
+        }
+    Debug.Log("Open space created: " + count);
+    }
+
+
     /// <summary>
     /// Method to add the open space cells above the skyline defined by the heightmap.
     /// It should be called after AddGround() and AddEmptySide() methods.
@@ -131,7 +176,11 @@ public class Plot3D : MonoBehaviour
 
     }
 
-    /// <returns>Returns hard coded positions to test the class behaviour.</returns>
+    /// <summary>
+    /// Places hard coded external player positions to test the player behaviour.
+    /// It works best with these parameters: Width = 10 | Depth = 10 | Height = 12.
+    /// </summary>
+    /// <returns></returns>
     public void AddSomeOccupied()
     {
         for (int y = 1; y < height -1; y++)
@@ -142,11 +191,53 @@ public class Plot3D : MonoBehaviour
                 {
                     if(x > 3 && z > 3 && z<7 && x <7 && y <7) cells[x, y, z].UpdateCell(5);
                     if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9) cells[x, y, z].UpdateCell(20);
-                    //if (z > 5) cells[x, y, z].UpdateCell(20);
 
                 }
             }
         }
+    }
+
+    public void CheckOpenSpaceOcclussions()
+    {
+        int count = 0;
+        for (int z = 0; z < depth; z++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (openGFMap[x, z] == 1)
+                {
+                    if (RayCast(new Coordinate3D(x, 0, z), sunReverseDirection, "CellOccupied"))
+                    {
+                        Debug.Log("Cell is occluding Open Space for OS: " + x + "," + z);
+                        count++;
+                        Vector3 start = Navigation.GetPosition(new Coordinate3D(x, 0, z), scale,transform.position);
+                        Vector3 end = start + sunReverseDirection.normalized * height;
+                        Debug.DrawLine(start, end, Color.blue, 3f);
+                    }
+                }
+            }
+        }
+        Debug.Log("Collisions found: " + count);
+    }
+
+    public bool RayCast(Vector3 position, Vector3 direction, string tagName)
+    {
+        bool punish = false;
+        Ray ray = new Ray(position, direction);
+        RaycastHit hit;
+        float maxDist = (float)(width + height + depth);
+
+        if (Physics.Raycast(ray, out hit, maxDist))
+        {
+            if (hit.collider.CompareTag(tagName))
+                punish = true;
+        }
+        return punish;
+    }
+
+    public bool RayCast(Coordinate3D coord, Vector3 direction, string tagName)
+    {
+        return RayCast(Navigation.GetPosition(coord, scale,transform.position), direction, tagName);
     }
 
     /// <summary>

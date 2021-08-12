@@ -2,36 +2,51 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 public class TestingEvents : MonoBehaviour
 {
-
-    public event EventHandler OnSpacePressed;
-    private void start()
+    //public event EventHandler OnGKeyPressed;
+    public event EventHandler <OnGKeyPressedEventArgs> OnGKeyPressed;
+    public class OnGKeyPressedEventArgs : EventArgs
     {
-        //This subscribes to the event
-        OnSpacePressed += Testing_OnSpacePressed;
+        public int spaceCountArg;
+        public string massageArg;
     }
 
-    private void Testing_OnSpacePressed(object sender, EventArgs e)
+    //delegates are signatures
+    public delegate void TestEventDelegate(float f);
+
+    public event TestEventDelegate OnFloatEvent;
+
+    //public event Action OnActionEvent;
+    public event Action <bool, int> OnActionEvent;
+
+    public UnityEvent OnUnityEvent;
+
+    private int spaceCount;
+
+    private void Start()
     {
-        Debug.Log("Space pressed!");
+        Debug.Log("Event started");
+        OnGKeyPressed += Testing_OnGKeyPressed; //Example of method subscribed within the same class. Not necessary.
+        spaceCount = 0;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.G))
         {
-            // we call the event handler like a function
-            //space pressed (object sender, EventArgs e)
-            //if(OnSpacePressed != null) OnSpacePressed(this, EventArgs.Empty);
-            //can use the null operator
-            OnSpacePressed?.Invoke(this, EventArgs.Empty);
-
-
-        }
-        
+            OnGKeyPressed?.Invoke(this, new OnGKeyPressedEventArgs { spaceCountArg = ++spaceCount });
+            OnFloatEvent?.Invoke(5.5f);
+            OnActionEvent?.Invoke(true, 56);
+            OnUnityEvent?.Invoke();
+        }                
     }
 
+    private void Testing_OnGKeyPressed(object sender, EventArgs e)
+    {
+        //Debug.Log("G Key is pressed at sender");
+    }
 }

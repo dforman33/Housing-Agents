@@ -52,7 +52,7 @@ public class SunCastingPlot : Plot3D
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             CheckOpenSpaceOcclussions();
         }

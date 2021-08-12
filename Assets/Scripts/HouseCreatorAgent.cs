@@ -19,7 +19,54 @@ public class HouseCreatorAgent : MonoBehaviour
     [HideInInspector] public byte houseID;
     [HideInInspector] public byte houseTargetSize;
     [HideInInspector] public byte houseCurrentSize;
-    
+
+    private void Awake()
+    {
+        plot = GetComponent<Plot3D>();
+        plot.SetupBoard();
+        plot.AddPlotConstraints();
+    }
+
+    private void Start()
+    {
+
+        //Initialise agent
+        AgentInit(1);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R)) RandomMove();
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            OccupyCell();
+            UpdateCurrentSize();
+            GetNeighborhoodValue();
+            ReadSelfNeighbor();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W)) MoveOne((int)DirectionChoice.Front);
+        if (Input.GetKeyDown(KeyCode.S)) MoveOne((int)DirectionChoice.Back);
+        if (Input.GetKeyDown(KeyCode.A)) MoveOne((int)DirectionChoice.Left);
+        if (Input.GetKeyDown(KeyCode.D)) MoveOne((int)DirectionChoice.Right);
+        if (Input.GetKeyDown(KeyCode.E)) MoveOne((int)DirectionChoice.Up);
+        if (Input.GetKeyDown(KeyCode.Q)) MoveOne((int)DirectionChoice.Down);
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            plot.AddPlotConstraints();
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            plot.CheckOpenSpaceOcclussions();
+        }
+
+    }
+
+
+
     /// <summary>
     /// At the agent initialization the game object at a random position.
     /// The house agent will loop a maximum of 100 times to attempt to occupy empty cells only. 
@@ -183,30 +230,5 @@ public class HouseCreatorAgent : MonoBehaviour
     }
 
 
-    private void Start()
-    {
-        plot = GetComponent<Plot3D>();
-        AgentInit(1);
-    }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R)) RandomMove();
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            OccupyCell();
-            UpdateCurrentSize();
-            GetNeighborhoodValue();
-            ReadSelfNeighbor();
-        }
-
-        if (Input.GetKeyDown(KeyCode.W)) MoveOne((int)DirectionChoice.Front);
-        if (Input.GetKeyDown(KeyCode.S)) MoveOne((int)DirectionChoice.Back);
-        if (Input.GetKeyDown(KeyCode.A)) MoveOne((int)DirectionChoice.Left);
-        if (Input.GetKeyDown(KeyCode.D)) MoveOne((int)DirectionChoice.Right);
-        if (Input.GetKeyDown(KeyCode.E)) MoveOne((int)DirectionChoice.Up);
-        if (Input.GetKeyDown(KeyCode.Q)) MoveOne((int)DirectionChoice.Down);
-
-    }
 }
