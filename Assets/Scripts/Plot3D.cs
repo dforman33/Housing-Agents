@@ -190,8 +190,8 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 1; x < width-1; x++)
                 {
-                    if(x > 3 && z > 3 && z<7 && x <7 && y <7) cells[x, y, z].UpdateCell(5);
-                    if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9) cells[x, y, z].UpdateCell(20);
+                    if(x > 3 && z > 3 && z<7 && x <7 && y <7 && cells[x,y,z].cellType != CellType.OPENSPACE) cells[x, y, z].UpdateCell(5);
+                    if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9 && cells[x, y, z].cellType != CellType.OPENSPACE) cells[x, y, z].UpdateCell(20);
 
                 }
             }

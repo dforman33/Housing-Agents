@@ -15,7 +15,7 @@ using Custom;
 /// It controls the target size and other paramenters to optimise its own benefit.
 /// </summary>
 
-public class HouseAgentScene06 : MonoBehaviour
+public class HouseAgentScene06 : Agent
 {
     public GameObject houseCreatorAgentPrefab;
     private Coordinate3D agentCoordinate;
@@ -33,8 +33,6 @@ public class HouseAgentScene06 : MonoBehaviour
     public event EventHandler OnBoundaryCoordinate;
     //OnAboveHeightOccupation is invoked if the player occupies cells above the height determined by the heightmap.
     public event EventHandler OnAboveHeightOccupation;
-    //OnOpenGroundOcclusion is invoked if the player occupies cells that preclude sunlight to the open space at ground.
-    public event EventHandler OnOpenGroundOcclusion;
     
     //EVENTS
 
@@ -127,8 +125,8 @@ public class HouseAgentScene06 : MonoBehaviour
     /// </summary>
     private void ClampCoordinate()
     {
-        bool isClamped;
-        agentCoordinate.ClampCoordinate(1, plot.width - 2, 1, plot.depth - 2, 1, plot.height - 2, out isClamped);
+        bool isClamped = false;
+        agentCoordinate.ClampCoordinate(1, plot.width - 2, 1, plot.height - 2, 1, plot.depth - 2, out isClamped);
         if (isClamped) OnBoundaryCoordinate?.Invoke(this, EventArgs.Empty);
     }
 
@@ -195,18 +193,17 @@ public class HouseAgentScene06 : MonoBehaviour
         plot.SetupBoard();
 
         //Get agent prefab
-        //houseCreatorAgentPrefab = plot.controller.HouseCreator;
+        houseCreatorAgentPrefab = plot.controller.HouseCreator;
+        plot.AddPlotConstraints();
 
         //Subscribe to events
-        //OnBoundaryCoordinate += Agent_OnBoundaryCoordinate;
-        //OnAboveHeightOccupation += Agent_OnAboveHeightOccupation;
-        //OnOpenGroundOcclusion += Agent_OnOpenGroundOcclusion;
+        OnBoundaryCoordinate += Agent_OnBoundaryCoordinate;
+        OnAboveHeightOccupation += Agent_OnAboveHeightOccupation;
     }
 
-    //private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { Debug.Log("Boundary reached"); AddReward(-1f); }
-    //private void Agent_OnAboveHeightOccupation(object sender, EventArgs e) { Debug.Log("Height Exceeded"); AddReward(-1f); }
-    //private void Agent_OnOpenGroundOcclusion(object sender, EventArgs e) { Debug.Log("Protected Ground Occluded"); AddReward(-1f); }
 
+    private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { Debug.Log("Boundary reached"); AddReward(-1f); }
+    private void Agent_OnAboveHeightOccupation(object sender, EventArgs e) { Debug.Log("Height Exceeded"); AddReward(-1f); }
 
 
     /*
@@ -223,103 +220,104 @@ public class HouseAgentScene06 : MonoBehaviour
     /// --- /// --- /// --- /// --- /// --- /// --- /// --- /// --- ///
     */
 
-    //public override void OnEpisodeBegin()
-    //{
-    //    plot.AddPlotConstraints();
-    //    AgentInit(1);
-    //}
+    public override void OnEpisodeBegin()
+    {
+        plot.AddPlotConstraints();
+        AgentInit(1);
+    }
 
-    //public override void CollectObservations(VectorSensor sensor)
-    //{
-    //    //observe the size of the array
-    //    sensor.AddObservation(plot.width);
-    //    sensor.AddObservation(plot.depth);
-    //    sensor.AddObservation(plot.height);
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        //observe the size of the array
+        sensor.AddObservation(plot.width);
+        sensor.AddObservation(plot.depth);
+        sensor.AddObservation(plot.height);
 
-    //    //observe the coordinate within the array
-    //    sensor.AddObservation(agentCoordinate.X);
-    //    sensor.AddObservation(agentCoordinate.Y);
-    //    sensor.AddObservation(agentCoordinate.Z);
+        //observe the coordinate within the array
+        sensor.AddObservation(agentCoordinate.X);
+        sensor.AddObservation(agentCoordinate.Y);
+        sensor.AddObservation(agentCoordinate.Z);
 
-    //    //Observe the cell at the currnet coordinate
-    //    sensor.AddObservation((int)plot.CellInCoord(agentCoordinate).cellType);
+        //Observe the cell at the currnet coordinate
+        sensor.AddObservation((int)plot.CellInCoord(agentCoordinate).cellType);
 
-    //    //observe what is around the agent at any given moment
-    //    sensor.AddObservation(GetNeighborhoodValue()[0]); //EMPTY - binary encoding of positions
-    //    sensor.AddObservation(GetNeighborhoodValue()[1]); //OCCUPIED - binary encoding of positions
-    //    sensor.AddObservation(GetNeighborhoodValue()[2]); //OPEN SPACE - binary encoding of positions
+        //observe what is around the agent at any given moment
+        sensor.AddObservation(GetNeighborhoodValue()[0]); //EMPTY - binary encoding of positions
+        sensor.AddObservation(GetNeighborhoodValue()[1]); //OCCUPIED - binary encoding of positions
+        sensor.AddObservation(GetNeighborhoodValue()[2]); //OPEN SPACE - binary encoding of positions
 
-    //    //observe the size of the agent
-    //    sensor.AddObservation(houseCurrentSize);
+        //observe the size of the agent
+        sensor.AddObservation(houseCurrentSize);
 
-    //    //TOTAL OBSERVATIONS = 11
-    //}
+        //TOTAL OBSERVATIONS = 11
+    }
 
-    //public override void OnActionReceived(ActionBuffers actions)
-    //{
-    //    int count = 0;
-    //    int housePreviousSize = houseCurrentSize;
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        int count = 0;
+        int housePreviousSize = houseCurrentSize;
 
-    //    //Action - choose one of the 7 possible directions (the last means iddle)
-    //    int directionAction = actions.DiscreteActions[0];
-    //    MoveOne(directionAction);
+        //Action - choose one of the 7 possible directions (the last means iddle)
+        int directionAction = actions.DiscreteActions[0];
+        MoveOne(directionAction);
 
-    //    //Action - decide whether to occupy the position or not
-    //    int occupyAction = actions.DiscreteActions[1];
-    //    if (occupyAction == 1)
-    //    {
-    //        CellType previousCellType = plot.CellInCoord(agentCoordinate).cellType;
-    //        OccupyCell();
-    //        UpdateCurrentSize();
+        //Action - decide whether to occupy the position or not
+        int occupyAction = actions.DiscreteActions[1];
+        if (occupyAction == 1)
+        {
+            CellType previousCellType = plot.CellInCoord(agentCoordinate).cellType;
+            OccupyCell();
+            UpdateCurrentSize();
 
-    //        //ADD REWARDS BASED ON THE ACTIONS' RESULTS
+            //ADD REWARDS BASED ON THE ACTIONS' RESULTS
 
-    //        //Reward according to the previous type of the cell just occupied
-    //        if (previousCellType == CellType.OPENSPACE) AddReward(-2f);
-    //        if (previousCellType == CellType.OCCUPIED) AddReward(-0.1f);
+            //Reward according to the previous type of the cell just occupied
+            if (previousCellType == CellType.OPENSPACE) AddReward(-2f);
+            if (previousCellType == CellType.OCCUPIED) AddReward(-0.1f);
 
-    //        //Reward positions that are not in isolation with regards to the player other positions
-    //        if (ReadSelfNeighbor() == 0 && houseCurrentSize > 1) AddReward(-1f);
-    //        else AddReward(0.2f);
-    //        AddReward(-0.1f * agentCoordinate.Y); //small negative reward to build higher
+            //Reward positions that are not in isolation with regards to the player other positions
+            IsWithinHeight(); //Checks for the height policy stored in the heightMap
+            if (ReadSelfNeighbor() == 0 && houseCurrentSize > 1) AddReward(-1f);
+            else AddReward(0.2f);
+            AddReward(-0.1f * agentCoordinate.Y); //small negative reward to build higher
 
-    //        //Reward growth and proximity to targeted size
-    //        if (houseCurrentSize < houseTargetSize && houseCurrentSize > housePreviousSize) AddReward(1f);
-    //        if (houseTargetSize == houseCurrentSize)
-    //        {
-    //            AddReward(5f);
-    //            EndEpisode();
-    //        }
+            //Reward growth and proximity to targeted size
+            if (houseCurrentSize < houseTargetSize && houseCurrentSize > housePreviousSize) AddReward(1f);
+            if (houseTargetSize == houseCurrentSize)
+            {
+                AddReward(5f);
+                EndEpisode();
+            }
 
-    //        if (houseCurrentSize > houseTargetSize) AddReward(-0.25f);
-    //        if (houseCurrentSize == houseTargetSize + 2) EndEpisode();
-    //    }
+            if (houseCurrentSize > houseTargetSize) AddReward(-0.25f);
+            if (houseCurrentSize == houseTargetSize + 2) EndEpisode();
+        }
 
-    //    count++;
-    //    AddReward(-0.1f);
-    //    if (count > 30) EndEpisode();
-    //}
+        count++;
+        AddReward(-0.1f);
+        if (count > 30) EndEpisode();
+    }
 
-    //public override void Heuristic(in ActionBuffers actionsOut)
-    //{
-    //    ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
 
-    //    int directionAction = 6;
+        int directionAction = 6;
 
-    //    if (Input.GetKey(KeyCode.W)) directionAction = 0;
-    //    else if (Input.GetKey(KeyCode.S)) directionAction = 1;
-    //    else if (Input.GetKey(KeyCode.A)) directionAction = 2;
-    //    else if (Input.GetKey(KeyCode.D)) directionAction = 3;
-    //    else if (Input.GetKey(KeyCode.E)) directionAction = 4;
-    //    else if (Input.GetKey(KeyCode.Q)) directionAction = 5;
+        if (Input.GetKey(KeyCode.W)) directionAction = 0;
+        else if (Input.GetKey(KeyCode.S)) directionAction = 1;
+        else if (Input.GetKey(KeyCode.A)) directionAction = 2;
+        else if (Input.GetKey(KeyCode.D)) directionAction = 3;
+        else if (Input.GetKey(KeyCode.E)) directionAction = 4;
+        else if (Input.GetKey(KeyCode.Q)) directionAction = 5;
 
 
-    //    int occupyAction = (Input.GetKey(KeyCode.T)) ? 1 : 0;
+        int occupyAction = (Input.GetKey(KeyCode.T)) ? 1 : 0;
 
-    //    discreteActions[0] = directionAction;
-    //    discreteActions[1] = occupyAction;
+        discreteActions[0] = directionAction;
+        discreteActions[1] = occupyAction;
 
-    //}
+    }
 
 
 

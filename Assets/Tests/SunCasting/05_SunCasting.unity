@@ -132,8 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 315513138}
-  - component: {fileID: 315513137}
-  - component: {fileID: 315513135}
   m_Layer: 0
   m_Name: Plot3D
   m_TagString: Untagged
@@ -141,39 +139,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &315513135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 315513134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ed988c71f58da942a525a59193ab451, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  houseCreatorAgentPrefab: {fileID: 6120623006961090121, guid: 386567cbbe7eb924bb4187da58c9ded4, type: 3}
-  houseID: 0
-  houseTargetSize: 0
-  houseCurrentSize: 0
---- !u!114 &315513137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 315513134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6714fed287163b4f954ca13107b9afe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EmptyCell: {fileID: 1070282286005765536, guid: 15c70a940cb289c48a82f7655d73b484, type: 3}
-  OccupiedCell: {fileID: 5872526976459809534, guid: 87de2efbd46005644877dda4cb03afcc, type: 3}
-  OpenSpaceCell: {fileID: 1070282286005765536, guid: fadaf39a86e91584b872cb2fa2f217cb, type: 3}
-  GroundCell: {fileID: 1070282286005765536, guid: f7bbf97ea5d326d43af482113741980e, type: 3}
-  HouseCreator: {fileID: 0}
 --- !u!4 &315513138
 Transform:
   m_ObjectHideFlags: 0
