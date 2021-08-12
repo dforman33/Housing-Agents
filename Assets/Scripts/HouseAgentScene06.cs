@@ -272,7 +272,7 @@ public class HouseAgentScene06 : Agent
             //ADD REWARDS BASED ON THE ACTIONS' RESULTS
 
             //Reward according to the previous type of the cell just occupied
-            if (previousCellType == CellType.OPENSPACE) AddReward(-2f);
+            if (previousCellType == CellType.OPENAIR) AddReward(-2f);
             if (previousCellType == CellType.OCCUPIED) AddReward(-0.1f);
 
             //Reward positions that are not in isolation with regards to the player other positions

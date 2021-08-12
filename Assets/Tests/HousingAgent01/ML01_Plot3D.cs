@@ -170,7 +170,7 @@ public class ML01_Plot3D : MonoBehaviour
 
         result[0] = ReadSqrNeighbors(coord, CellType.EMPTY);
         result[1] = ReadSqrNeighbors(coord, CellType.OCCUPIED);
-        result[2] = ReadSqrNeighbors(coord, CellType.OPENSPACE);
+        result[2] = ReadSqrNeighbors(coord, CellType.OPENAIR);
 
         return result;
     }

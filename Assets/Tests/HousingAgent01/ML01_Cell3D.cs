@@ -49,7 +49,7 @@ namespace Custom
         private void UpdateCellType()
         {
             if (playerID == 0) cellType = CellType.EMPTY;
-            else if (playerID == 254) cellType = CellType.OPENSPACE;
+            else if (playerID == 254) cellType = CellType.OPENAIR;
             else if (playerID == 255) cellType = CellType.GROUND;
             else cellType = CellType.OCCUPIED;
         }
@@ -67,9 +67,9 @@ namespace Custom
             {
                 SetNewCellInPlot(controller.OccupiedCell);
             }
-            if (cellType == CellType.OPENSPACE)
+            if (cellType == CellType.OPENAIR)
             {
-                SetNewCellInPlot(controller.OpenSpaceCell);
+                SetNewCellInPlot(controller.OpenAirCell);
             }
             if (cellType == CellType.GROUND)
             {

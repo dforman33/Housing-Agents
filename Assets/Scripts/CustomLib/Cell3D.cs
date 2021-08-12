@@ -51,8 +51,9 @@ namespace Custom
         private void UpdateCellType()
         {
             if (playerID == 0) cellType = CellType.EMPTY;
-            else if (playerID == 254) cellType = CellType.OPENSPACE;
-            else if (playerID == 255) cellType = CellType.GROUND;
+            else if (playerID == 253) cellType = CellType.OPENAIR; // 253 = OPEN AIR CELL
+            else if (playerID == 254) cellType = CellType.OPENGROUND; // 254 = OPEN GROUND CELL
+            else if (playerID == 255) cellType = CellType.GROUND; // 255 = GROUND
             else cellType = CellType.OCCUPIED;
         }
 
@@ -69,13 +70,17 @@ namespace Custom
             {
                 SetNewCellInPlot(controller.OccupiedCell);
             }
-            if (cellType == CellType.OPENSPACE)
+            if (cellType == CellType.OPENAIR)
             {
-                SetNewCellInPlot(controller.OpenSpaceCell);
+                SetNewCellInPlot(controller.OpenAirCell);
             }
             if (cellType == CellType.GROUND)
             {
                 SetNewCellInPlot(controller.GroundCell);
+            }
+            if (cellType == CellType.OPENGROUND)
+            {
+                SetNewCellInPlot(controller.GroundOpenSpace);
             }
 
             if (oldGo != null) Destroy(oldGo);
@@ -89,14 +94,14 @@ namespace Custom
 
         public void UpdateColor(Color newColor)
         {
-            if (cellType == CellType.OCCUPIED || cellType == CellType.GROUND)
+            if (cellType == CellType.OCCUPIED)
                 plot.cells[coordinate.X, coordinate.Y, coordinate.Z].gameObject.GetComponent<Renderer>().material.color = newColor;
         }
 
         private void OnMouseDown()
         {
             if (Input.GetKey(KeyCode.LeftShift))
-                UpdateCell(254);
+                UpdateCell(253);
             else
                 UpdateCell(10);
         }

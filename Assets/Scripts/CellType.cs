@@ -3,6 +3,7 @@ public enum CellType
 {
     OCCUPIED,
     EMPTY,
-    OPENSPACE, 
-    GROUND
+    OPENAIR, 
+    GROUND,
+    OPENGROUND
 }

@@ -50,7 +50,7 @@ public class CellState : MonoBehaviour
         else if (Input.GetKey(KeyCode.LeftShift))
         {
             Destroy(child.gameObject);
-            Instantiate(controller.OpenSpaceCell, transform.position, transform.rotation);
+            Instantiate(controller.OpenAirCell, transform.position, transform.rotation);
         }
     }
 }

@@ -98,7 +98,7 @@ public class Plot3D : MonoBehaviour
                 for (int x = 0; x < width; x++)
                 {
                     if (x == 0 || z == 0 || x == width - 1 || z == depth - 1)
-                        cells[x, y, z].UpdateCell(254); //Open Space
+                        cells[x, y, z].UpdateCell(253); // 253 = OPEN AIR CELL
                 }
             }
         }
@@ -118,7 +118,7 @@ public class Plot3D : MonoBehaviour
                 {
                     if (y == 0)
                     {
-                        cells[x, y, z].UpdateCell(255); //Ground
+                        cells[x, y, z].UpdateCell(255); // 255 = GROUND
                     }
                 }
             }
@@ -140,13 +140,13 @@ public class Plot3D : MonoBehaviour
                 {
                     if (openGFMap[x, z] == 1 && y == 0)
                     {
-                        cells[x, 0, z].UpdateColor(new Color(.95f, .95f, .95f)); //Open Space at Ground Floor
+                        cells[x, y, z].UpdateCell(254); // 254 = OPEN GROUND CELL
                         count++;
                     }
 
                     if (openGFMap[x, z] == 1 && y > 0)
                     {
-                        cells[x, y, z].UpdateCell(254); //Open Space
+                        cells[x, y, z].UpdateCell(253); // 253 = OPEN AIR CELL
                     }
 
                 }
@@ -170,7 +170,7 @@ public class Plot3D : MonoBehaviour
                 for (int x = 0; x < width; x++)
                 {
                     if (y > heightMap[x,z]) 
-                        cells[x, y, z].UpdateCell(254); //Open Space
+                        cells[x, y, z].UpdateCell(253); // 253 = OPEN AIR CELL
                 }
             }
         }
@@ -190,14 +190,18 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 1; x < width-1; x++)
                 {
-                    if(x > 3 && z > 3 && z<7 && x <7 && y <7 && cells[x,y,z].cellType != CellType.OPENSPACE) cells[x, y, z].UpdateCell(5);
-                    if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9 && cells[x, y, z].cellType != CellType.OPENSPACE) cells[x, y, z].UpdateCell(20);
+                    if(x > 3 && z > 3 && z<7 && x <7 && y <7 && cells[x,y,z].cellType != CellType.OPENAIR) cells[x, y, z].UpdateCell(5);
+                    if (x > 5 && z > 6 && z < 9 && x < 9 && y < 9 && cells[x, y, z].cellType != CellType.OPENAIR) cells[x, y, z].UpdateCell(20);
 
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Calculates the number of open space occlusions within the aggregation and draws debug lines to represent them.
+    /// </summary>
+    /// <returns></returns>
     public void CheckOpenSpaceOcclussions()
     {
         int count = 0;
@@ -219,6 +223,40 @@ public class Plot3D : MonoBehaviour
             }
         }
         Debug.Log("Collisions found: " + count);
+    }
+
+    /// <summary>
+    /// Calculates the showding from one coordinate towards the ground floor, using the sunrays direction casts a ray and check for hits.
+    /// </summary>
+    /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
+    /// <returns> A value between -1 if open ground, 0 if empty, or +1 if falls on ground</returns>
+    public int ShadowingAnotherCell(Coordinate3D coord)
+    {
+        int cellType = 0; //Empty space
+
+        Ray ray = new Ray(Navigation.GetPosition(coord, scale, transform.position), -1f * sunReverseDirection);
+        RaycastHit hit;
+
+        float maxDist = (float)(width + height + depth);
+
+        if (Physics.Raycast(ray, out hit, maxDist))
+        {
+            if (hit.collider.CompareTag("GroundOpen"))
+            {
+                cellType = -1;
+            }
+            
+            else if (hit.collider.CompareTag("CellOccupied"))
+            {
+                cellType = 0;
+            }
+
+            else
+            {
+                cellType = 1;
+            }
+        }
+        return cellType;
     }
 
     public bool RayCast(Vector3 position, Vector3 direction, string tagName)
@@ -274,7 +312,7 @@ public class Plot3D : MonoBehaviour
 
         result[0] = ReadSqrNeighbors(coord, CellType.EMPTY);
         result[1] = ReadSqrNeighbors(coord, CellType.OCCUPIED);
-        result[2] = ReadSqrNeighbors(coord, CellType.OPENSPACE);
+        result[2] = ReadSqrNeighbors(coord, CellType.OPENAIR);
 
         return result;
     }

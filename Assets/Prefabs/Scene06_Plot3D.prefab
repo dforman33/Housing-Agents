@@ -69,8 +69,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EmptyCell: {fileID: 1070282286005765536, guid: 15c70a940cb289c48a82f7655d73b484, type: 3}
   OccupiedCell: {fileID: 5872526976459809534, guid: 87de2efbd46005644877dda4cb03afcc, type: 3}
-  OpenSpaceCell: {fileID: 1070282286005765536, guid: fadaf39a86e91584b872cb2fa2f217cb, type: 3}
+  OpenAirCell: {fileID: 1070282286005765536, guid: fadaf39a86e91584b872cb2fa2f217cb, type: 3}
   GroundCell: {fileID: 1070282286005765536, guid: f7bbf97ea5d326d43af482113741980e, type: 3}
+  GroundOpenSpace: {fileID: 1070282286005765536, guid: 93352e2f772bf634d9422a8d62a21216, type: 3}
   HouseCreator: {fileID: 6120623006961090121, guid: 386567cbbe7eb924bb4187da58c9ded4, type: 3}
 --- !u!114 &4680827813093360674
 MonoBehaviour:
