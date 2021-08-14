@@ -229,11 +229,10 @@ public class Plot3D : MonoBehaviour
     /// Calculates the showding from one coordinate towards the ground floor, using the sunrays direction casts a ray and check for hits.
     /// </summary>
     /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
-    /// <returns> A value between -1 if open ground, 0 if empty, or +1 if falls on ground</returns>
+    /// <returns> An event that sends a float value linked to the possible reward value between -2 if open ground, 0 if empty, or +0.5 if falls on ground</returns>
     public int ShadowingAnotherCell(Coordinate3D coord)
     {
-        int cellType = 0; //Empty space
-
+        int shadowValue = 0;
         Ray ray = new Ray(Navigation.GetPosition(coord, scale, transform.position), -1f * sunReverseDirection);
         RaycastHit hit;
 
@@ -241,22 +240,13 @@ public class Plot3D : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, maxDist))
         {
-            if (hit.collider.CompareTag("GroundOpen"))
-            {
-                cellType = -1;
-            }
-            
-            else if (hit.collider.CompareTag("CellOccupied"))
-            {
-                cellType = 0;
-            }
-
-            else
-            {
-                cellType = 1;
-            }
+            //If the raycast hits a predetermined type triggers a shadowing event with a float value in it.
+            if (hit.collider.CompareTag("GroundOpen")) { shadowValue = -1; }
+            else if (hit.collider.CompareTag("CellOccupied")) { shadowValue = 0; }
+            else { shadowValue = 1; }
         }
-        return cellType;
+
+        return shadowValue;
     }
 
     public bool RayCast(Vector3 position, Vector3 direction, string tagName)

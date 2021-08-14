@@ -6,20 +6,11 @@ namespace Custom
     {
         //the state indicates the player that occupies the cell or if this is public space
         [HideInInspector] public Coordinate3D coordinate;
-
         [HideInInspector] public Vector3 cellPos;
         [HideInInspector] public float cellScale;
-
         [HideInInspector] public CellType cellType;
-
-        //[HideInInspector] public GameObject cellPrefab;
-        [HideInInspector] public bool isFixed;
-
         [HideInInspector] public byte playerID;
-
-        [Header("Connections to main plot")]
         [HideInInspector] public CellStateController controller;
-
         [HideInInspector] public Plot3D plot;
 
         public void SetUpCell(int coorX, int coorY, int coorZ, Plot3D plot, CellStateController controller, byte playerID)
@@ -28,7 +19,6 @@ namespace Custom
             this.plot = plot;
             this.controller = controller;
             cellScale = plot.scale;
-            isFixed = false;
             cellPos = transform.position;
             UpdatePlayerID(playerID);
             Debug.Log("Cell position: " + cellPos + " and cell name: " + this.name);

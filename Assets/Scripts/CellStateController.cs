@@ -10,6 +10,7 @@ public class CellStateController : MonoBehaviour
     public GameObject GroundCell;
     public GameObject GroundOpenSpace;
     public GameObject HouseCreator;
+    public GameObject FailedOccupation;
 }
 
 
