@@ -39,8 +39,6 @@ namespace Custom
             width = plot.width;
             depth = plot.depth;
             this.maxHeight = maxHeight < plot.height - 2 ? maxHeight : plot.height - 2;
-            
-            Debug.Log("max height from hMap: " + maxHeight);
 
             this.minHeight = minHeight;
             scale = plot.scale;

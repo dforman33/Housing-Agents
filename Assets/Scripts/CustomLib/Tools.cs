@@ -38,13 +38,13 @@ namespace Custom
                     result = HexToRGB("#03045e"); //Dark blue
                     break;
                 case 2:
-                    result = HexToRGB("#023e8a");
+                    result = HexToRGB("#1b4332"); //Dark green
                     break;
                 case 3:
-                    result = HexToRGB("#0077b6");
+                    result = HexToRGB("#800f2f"); //Dark red
                     break;
                 case 4:
-                    result = HexToRGB("#0096c7");
+                    result = HexToRGB("#ff6d00"); //Dark orange
                     break;
                 case 5:
                     result = HexToRGB("#00b4d8");
@@ -53,7 +53,7 @@ namespace Custom
                     result = HexToRGB("#48cae4");
                     break;
                 case 7:
-                    result = HexToRGB("#1b4332"); //Dark green
+                    result = HexToRGB("#023e8a");
                     break;
                 case 8:
                     result = HexToRGB("#2d6a4f");
@@ -71,7 +71,7 @@ namespace Custom
                     result = HexToRGB("#95d5b2");
                     break;
                 case 13:
-                    result = HexToRGB("#800f2f"); //Dark red
+                    result = HexToRGB("#0077b6");
                     break;
                 case 14:
                     result = HexToRGB("#a4133c");
@@ -89,7 +89,7 @@ namespace Custom
                     result = HexToRGB("#ff8fa3");
                     break;
                 case 19:
-                    result = HexToRGB("#ff6d00"); //Dark orange
+                    result = HexToRGB("#0096c7");
                     break;
                 case 20:
                     result = HexToRGB("#ff7900");

@@ -21,7 +21,6 @@ namespace Custom
             cellScale = plot.scale;
             cellPos = transform.position;
             UpdatePlayerID(playerID);
-            Debug.Log("Cell position: " + cellPos + " and cell name: " + this.name);
             UpdateCellType();
         }
 

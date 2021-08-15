@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,9 @@ public class Plot3D : MonoBehaviour
     [HideInInspector] public int[,] heightMap;
     [HideInInspector] public int[,] openGFMap;
     [HideInInspector] public CellStateController controller;
+
+    //EVENTS
+    public event Action<int> OnOccupyCell;
 
 
     /// <summary>
@@ -152,7 +156,6 @@ public class Plot3D : MonoBehaviour
                 }
             }
         }
-    Debug.Log("Open space created: " + count);
     }
 
 
@@ -222,7 +225,6 @@ public class Plot3D : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Collisions found: " + count);
     }
 
     /// <summary>
@@ -277,6 +279,7 @@ public class Plot3D : MonoBehaviour
     public void OccupyCell(Coordinate3D coord, byte playerID)
     {
         cells[coord.X, coord.Y, coord.Z].UpdateCell(playerID);
+        OnOccupyCell?.Invoke(playerID);
     }
 
     /// <summary>
@@ -330,7 +333,7 @@ public class Plot3D : MonoBehaviour
     /// </summary>
     /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
     /// <returns>An integer that is the binary value of the square horizontal neighborhood for the cell. If all are occupied the result must be equal to 15. </returns>
-    private int ReadSqrHorizNeighbors(Coordinate3D coord)
+    public int ReadSqrHorizNeighbors(Coordinate3D coord)
     {
         int result = 0;
         result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Front]).cellType == CellType.OCCUPIED ? 1 : 0;
@@ -358,12 +361,25 @@ public class Plot3D : MonoBehaviour
         return result;
     }
 
-
+    /// <summary></summary>
     /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
     /// <returns>The cell at the specific coordinate.</returns>
     public Cell3D CellInCoord(Coordinate3D coord)
     {
         return cells[coord.X, coord.Y, coord.Z];
+    }
+
+    /// <summary>
+    /// Evaluates the plot to count the number of cells with the same ID.
+    /// </summary>
+    /// <param name="playerID">The player's unique ID.</param>
+    /// <returns>An integer that is the sum of all values with the same player ID.</returns>
+    public int EqualIDsCount(int playerID)
+    {
+        int count = 0;
+        foreach (var cell in cells) { if (cell.playerID == playerID) count++; }
+        return count;
+
     }
 
 }

@@ -20,20 +20,16 @@ public class HouseAgentScene06 : Agent
     public GameObject houseCreatorAgentPrefab;
     private Coordinate3D agentCoordinate;
     [HideInInspector] public Plot3D plot;
-
     [HideInInspector] public byte houseID;
     [HideInInspector] public byte houseTargetSize;
     [HideInInspector] public byte houseCurrentSize;
-
-    private static System.Random random;
+    [HideInInspector] private CellStateController controller;
 
     //EVENTS
-
     //OnBoundaryCoordinate is invoked in the Clamp() method.
     public event EventHandler OnBoundaryCoordinate;
     //OnAboveHeightOccupation is invoked if the player occupies cells above the height determined by the heightmap.
     public event EventHandler OnAboveHeightOccupation;
-
     //EVENTS
 
 
@@ -42,12 +38,14 @@ public class HouseAgentScene06 : Agent
     /// </summary>
     private void AgentInit(byte houseID, byte targetSize)
     {
+        try { Destroy(houseCreatorAgentPrefab); }
+        catch { }
         this.houseID = houseID;
         houseTargetSize = targetSize;
-        if (houseCreatorAgentPrefab != null) Destroy(houseCreatorAgentPrefab);
         houseCreatorAgentPrefab = Instantiate(houseCreatorAgentPrefab, Vector3.zero, Quaternion.identity);
         houseCreatorAgentPrefab.transform.parent = transform;
         houseCreatorAgentPrefab.name = "house_agent_" + houseID;
+        houseCurrentSize = 0;
         RandomMove();
     }
 
@@ -60,8 +58,9 @@ public class HouseAgentScene06 : Agent
     {
         AgentInit(houseID, 10);
     }
+
     /// <summary>
-    /// If invoked the house agent occupies the cell at the current position. 
+    /// The house agent occupies the cell at the current position. 
     /// </summary>
     private void OccupyCell()
     {
@@ -191,14 +190,16 @@ public class HouseAgentScene06 : Agent
         return plot.ShadowingAnotherCell(agentCoordinate);
     }
 
-
     private void InstantiateFailedOccupation()
     {
         float timeAlive = 1.0f;
-        GameObject failedObject = Instantiate(plot.controller.FailedOccupation, Vector3.zero, Quaternion.identity);
+        GameObject failedObject = Instantiate(controller.FailedOccupation, Vector3.zero, Quaternion.identity);
         failedObject.transform.localPosition = Navigation.GetPosition(agentCoordinate, plot.scale);
         Destroy(failedObject, timeAlive);
     }
+
+
+
 
     /*
     /// --- /// --- /// --- /// --- /// --- /// --- /// --- /// --- ///
@@ -217,7 +218,7 @@ public class HouseAgentScene06 : Agent
 
     private void Awake()
     {
-        //random = new System.Random();
+        controller = GetComponent<CellStateController>();
 
         //Initialise plot
         plot = GetComponent<Plot3D>();
@@ -225,6 +226,7 @@ public class HouseAgentScene06 : Agent
 
         //Get agent prefab
         houseCreatorAgentPrefab = plot.controller.HouseCreator;
+        houseCreatorAgentPrefab = Instantiate(houseCreatorAgentPrefab, Vector3.zero, Quaternion.identity);
         plot.AddPlotConstraints();
 
         //Subscribe to events
@@ -259,8 +261,8 @@ public class HouseAgentScene06 : Agent
     {
         //observe the size of the array
         sensor.AddObservation(plot.width);
-        sensor.AddObservation(plot.depth);
         sensor.AddObservation(plot.height);
+        sensor.AddObservation(plot.depth);
 
         //observe the coordinate within the array
         sensor.AddObservation(agentCoordinate.X);
@@ -275,13 +277,19 @@ public class HouseAgentScene06 : Agent
         sensor.AddObservation(GetNeighborhoodValue()[1]); //OCCUPIED - binary encoding of positions
         sensor.AddObservation(GetNeighborhoodValue()[2]); //OPEN SPACE - binary encoding of positions
 
-        //observe the size of the agent
+        // Observe the neighbourhood of cells around this coordinate
+        sensor.AddObservation(ReadSelfNeighbor());
+
+        //observe the size of the agent house
         sensor.AddObservation(houseCurrentSize);
+
+        //observe the agent house target size
+        sensor.AddObservation(houseTargetSize);
 
         //observe the type of cell we are casting a shadow on
         sensor.AddObservation(ShadowingCellType());
 
-        //TOTAL OBSERVATIONS = 12
+        //TOTAL OBSERVATIONS = 14
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -302,7 +310,7 @@ public class HouseAgentScene06 : Agent
             int shadowValue = ShadowingCellType();
             if(shadowValue < 0)
             {
-                AddReward(-2f);
+                AddReward(-1f);
                 InstantiateFailedOccupation();
             }
             else
@@ -316,12 +324,14 @@ public class HouseAgentScene06 : Agent
                 //ADD REWARDS BASED ON THE ACTIONS' RESULTS
 
                 //Reward according to the previous type of the cell just occupied
-                if (previousCellType == CellType.OPENAIR) AddReward(-2f);
+                if (previousCellType == CellType.OPENAIR) AddReward(-1f);
                 if (previousCellType == CellType.OCCUPIED) AddReward(-0.1f);
 
+                //Check the height policy 
+                IsWithinHeight(); 
+                
                 //Reward positions that are not in isolation with regards to the player other positions
-                IsWithinHeight(); //Checks for the height policy stored in the heightMap
-                if (ReadSelfNeighbor() == 0 && houseCurrentSize > 1) AddReward(-1f);
+                if (ReadSelfNeighbor() == 0 && houseCurrentSize > 1) AddReward(-0.2f);
                 else AddReward(0.2f);
                 AddReward(-0.1f * agentCoordinate.Y); //small negative reward to build higher
 
@@ -338,7 +348,7 @@ public class HouseAgentScene06 : Agent
             }
         }
         steps++;
-        //AddReward(-1f / maxSteps);
+        AddReward(-1f / maxSteps);
 
         if (steps >= maxSteps)
         {
