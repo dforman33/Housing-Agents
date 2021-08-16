@@ -18,7 +18,7 @@ public class Plot3D : MonoBehaviour
     public int maxHeight = 8; //y height
 
     [SerializeField] private static Vector3 sunReverseDirection = new Vector3(0.1f, 1, 0.1f);
-    [SerializeField] public bool addHardCodedOccupied = true;
+    [SerializeField] public bool addHardCodedOccupied = false;
 
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public int[,] heightMap;
@@ -28,7 +28,15 @@ public class Plot3D : MonoBehaviour
     //EVENTS
     public event Action<int> OnOccupyCell;
 
-
+    public void ResetBoard(int newWidth, int newHeight, int newDepth)
+    {
+        foreach (var cell in cells) { if(cell.gameObject != null) Destroy(cell.gameObject); }
+        width = newWidth;
+        height = newHeight;
+        depth = newDepth;
+        SetupBoard();
+        AddPlotConstraints();
+    }
     /// <summary>
     /// Method that instantiates the necessary parameters for the plot3D and generates a three-dimensional array of cells to record and assess moves from players.
     /// </summary>

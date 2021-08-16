@@ -220,7 +220,7 @@ public class HouseAgentScript : Agent
         return result;
     }
 
-    private int ReadSelfNeighbor()
+    public int ReadSelfNeighbor()
     {
         return plot.ReadSelfNeighbor(agentCoordinate, houseID);
     }

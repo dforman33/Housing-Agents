@@ -68,6 +68,7 @@ public class Scene07Environment : MonoBehaviour
         int count = 0;
         foreach (var agent in AgentsList)
         {
+            agent.houseCurrentSize = (byte)agent.ReadSelfNeighbor();
             count += agent.houseCurrentSize;
         }
         occupationCount = count;
@@ -78,8 +79,12 @@ public class Scene07Environment : MonoBehaviour
     /// </summary>
     public void ResetScene()
     {
-        plot.CleanBoard();
-        plot.AddPlotConstraints();
+        plot.ResetBoard(
+            UnityEngine.Random.Range(plot.width - 5, plot.width + 5), 
+            UnityEngine.Random.Range(plot.height - 5, plot.height+ 5), 
+            UnityEngine.Random.Range(plot.depth - 5, plot.depth+ 5));
+
+        //Read new heightmap
         heightMap = plot.heightMap;
         //Reset Agents
         foreach (var agent in AgentsList) { agent.AgentRestartEpisode(heightMap); }
@@ -87,6 +92,26 @@ public class Scene07Environment : MonoBehaviour
         moveSteps = 0;
         occupationCount = 0;
         currentPlayer = 1;
+    }
+
+    /// <summary>
+    /// Called when the whole scene needs to be cleaned and values reset to the initial state.
+    /// </summary>
+    public void AddAgent()
+    {
+        numberOfPlayers++;
+
+        GameObject instance = Instantiate<GameObject>(controller.HouseCreator, Vector3.zero + transform.localPosition, Quaternion.identity);
+        instance.transform.parent = transform;
+        instance.name = $"houseID-{numberOfPlayers}";
+        HouseAgentScript houseAgent = instance.GetComponent<HouseAgentScript>();
+        houseAgent.AgentInit((byte)(numberOfPlayers), (byte)(UnityEngine.Random.Range(6,12)), this.plot);
+        AgentsList.Add(houseAgent);
+        multiAgentGroup.RegisterAgent(AgentsList[numberOfPlayers - 1]);
+        TargetOccupation += houseAgent.houseTargetSize;
+
+        Debug.Log($"Number of players is {numberOfPlayers} and occupation target {TargetOccupation}.");
+
     }
 
 
@@ -153,7 +178,7 @@ public class Scene07Environment : MonoBehaviour
         }
 
         //penalty on time to accomplish aggregation
-        multiAgentGroup.AddGroupReward(-0.1f * numberOfPlayers / MaxEnvironmentSteps);
+        multiAgentGroup.AddGroupReward(-1f * numberOfPlayers / MaxEnvironmentSteps);
 
         AgentsList[currentPlayer - 1].RequestDecision();
 
@@ -161,7 +186,7 @@ public class Scene07Environment : MonoBehaviour
 
         moveSteps++;
         envMoveSteps++;
-        Debug.Log($"Number of steps: {envMoveSteps}");
+
         if(moveSteps >= maxMoveSteps)
         {
             moveSteps = 0;

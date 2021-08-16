@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d9f797ae42559e4ab31b496e8ca2de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 9
-  height: 11
-  depth: 9
+  width: 10
+  height: 10
+  depth: 10
   scale: 1
   minHeight: 3
   maxHeight: 8
@@ -86,6 +86,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   developmentTargetSize: 0
-  numberOfPlayers: 8
+  numberOfPlayers: 4
   MaxEnvironmentSteps: 7200
   maxMoveSteps: 30
