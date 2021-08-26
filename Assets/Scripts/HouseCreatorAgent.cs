@@ -24,7 +24,8 @@ public class HouseCreatorAgent : MonoBehaviour
     {
         plot = GetComponent<Plot3D>();
         plot.SetupBoard();
-        plot.AddPlotConstraints();
+        int openSpaceThreshold = 75;
+        plot.AddPlotConstraints(openSpaceThreshold);
     }
 
     private void Start()
@@ -55,7 +56,8 @@ public class HouseCreatorAgent : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
         {
-            plot.AddPlotConstraints();
+            int openSpaceThreshold = 75;
+            plot.AddPlotConstraints(openSpaceThreshold);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftControl))

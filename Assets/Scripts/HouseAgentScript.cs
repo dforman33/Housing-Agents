@@ -32,30 +32,32 @@ public class HouseAgentScript : Agent
     [HideInInspector] public int maxZ;
 
     [HideInInspector] public bool isActive;
-    [HideInInspector] public Observations observations;
-   
-    
-    
 
     //EVENTS
     //OnBoundaryCoordinate is invoked in the Clamp() method.
     public event EventHandler OnBoundaryCoordinate;
-    //OnAboveHeightOccupation is invoked if the player occupies cells above the height determined by the heightmap.
-    public event EventHandler OnAboveHeightOccupation;
 
     //EVENT SUBSCRIBERS
-    private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { AddReward(-1f); }
-    private void Agent_OnAboveHeightOccupation(object sender, EventArgs e) { AddReward(-1f); }
+    private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { AddReward(-2f); }
+ 
 
 
     /// <summary>
     /// The agent remains instantiated but the position is set randomly and all the occupations removed.
     /// </summary>
-    public void AgentRestartEpisode(int[,] heightMap)
+    public void AgentRestartEpisode(int[,] heightMap, Plot3D plot)
     {
+        this.plot = plot;
+        this.heightMap = plot.heightMap;
+        houseCurrentSize = 0;
+
+        maxX = plot.width;
+        maxY = plot.height;
+        maxZ = plot.depth;
+        scale = plot.scale;
+
         RandomMove();
         isActive = true;
-        UpdateObservations();
         houseCurrentSize = 0;
         this.heightMap = heightMap;
     }
@@ -68,14 +70,6 @@ public class HouseAgentScript : Agent
     {
         //Subscribe to events
         OnBoundaryCoordinate += Agent_OnBoundaryCoordinate;
-        OnAboveHeightOccupation += Agent_OnAboveHeightOccupation;
-
-        //controller = FindObjectOfType<CellStateController>();
-        //houseCreatorAgentPrefab = controller.HouseCreator;
-
-        //houseCreatorAgentPrefab = Instantiate(houseCreatorAgentPrefab, Vector3.zero, Quaternion.identity);
-        //houseCreatorAgentPrefab.transform.parent = transform;
-        //houseCreatorAgentPrefab.name = $"house_agent_{houseID}";
 
         this.plot = plot;
         this.houseID = houseID;
@@ -90,9 +84,6 @@ public class HouseAgentScript : Agent
         
         RandomMove();
         isActive = true;
-        observations = new Observations { agentID = houseID, currentSize = 0 };
-        UpdateObservations();
-        
     }
 
 
@@ -102,7 +93,6 @@ public class HouseAgentScript : Agent
     private void OccupyCell()
     {
         plot.OccupyCell(agentCoordinate, houseID);
-        IsWithinHeight();
     }
 
     /// <summary>
@@ -139,7 +129,6 @@ public class HouseAgentScript : Agent
             ClampCoordinate();
         }
         else { return; }
-        //houseCreatorAgentPrefab.transform.localPosition = Navigation.GetPosition(agentCoordinate, scale);
         transform.localPosition = Navigation.GetPosition(agentCoordinate, scale);
     }
 
@@ -159,9 +148,7 @@ public class HouseAgentScript : Agent
     /// </summary>
     private void UpdateCurrentSize()
     {
-        observations.currentSize = plot.EqualIDsCount(houseID);
-        houseCurrentSize = (byte)observations.currentSize;
-        Debug.Log("Player " + houseID + " current size " + houseCurrentSize);
+        houseCurrentSize = (byte)plot.EqualIDsCount(houseID);
     }
 
     /// <summary>
@@ -179,22 +166,8 @@ public class HouseAgentScript : Agent
         else
         {
             isWithinHeight = false;
-            OnAboveHeightOccupation?.Invoke(this, EventArgs.Empty);
         }
         return isWithinHeight;
-    }
-
-    public void UpdateObservations()
-    {
-        observations.currentCellType = (int)plot.CellInCoord(agentCoordinate).cellType;
-        Debug.Log($"observations.currentCellType: {observations.currentCellType}");
-        observations.neighborhoodValues = plot.GetNeighborhoodValue(agentCoordinate);
-        observations.selfNeighbourhood = plot.ReadSelfNeighbor(agentCoordinate, houseID);
-        observations.horizNeighbourhood = plot.ReadSqrHorizNeighbors(agentCoordinate);
-        observations.currentSize = plot.EqualIDsCount(houseID);
-        observations.shadowOnCellType = plot.ShadowingAnotherCell(agentCoordinate);
-
-        houseCurrentSize = (byte)observations.currentSize;
     }
 
     private void InstantiateFailedOccupation()
@@ -245,119 +218,127 @@ public class HouseAgentScript : Agent
     /// --- /// --- /// --- /// --- /// --- /// --- /// --- /// --- ///
     */
 
-    //public override void OnEpisodeBegin()
-    //{
-    //    AgentRestartEpisode(heightMap);
-    //}
-
     public override void CollectObservations(VectorSensor sensor)
     {
-        UpdateObservations();
-
         //observe the size of the array
-        sensor.AddObservation(maxX);
-        sensor.AddObservation(maxY);
-        sensor.AddObservation(maxZ);
+        sensor.AddObservation(maxX - 1);
+        sensor.AddObservation(maxY - 1);
+        sensor.AddObservation(maxZ - 1);
 
         //observe the coordinate within the array
         sensor.AddObservation(agentCoordinate.X);
         sensor.AddObservation(agentCoordinate.Y);
         sensor.AddObservation(agentCoordinate.Z);
 
-        //Observe the cell at the current coordinate
-        sensor.AddObservation((int)plot.CellInCoord(agentCoordinate).cellType);
-
         //observe what is around the agent at any given moment
-        //sensor.AddObservation(observations.neighborhoodValues[0]); //EMPTY - binary encoding of positions
-        //sensor.AddObservation(observations.neighborhoodValues[1]); //OCCUPIED - binary encoding of positions
-        //sensor.AddObservation(observations.neighborhoodValues[2]); //OPEN SPACE - binary encoding of positions
-
         sensor.AddObservation(GetNeighborhoodValue()[0]); //EMPTY - binary encoding of positions
         sensor.AddObservation(GetNeighborhoodValue()[1]); //OCCUPIED - binary encoding of positions
         sensor.AddObservation(GetNeighborhoodValue()[2]); //OPEN SPACE - binary encoding of positions
 
         //Observe the neighbourhood of cells around this coordinate
-        //sensor.AddObservation(observations.selfNeighbourhood);
         sensor.AddObservation(ReadSelfNeighbor());
 
+        //Observe the cell type at the current coordinate
+        sensor.AddObservation((int)plot.CellInCoord(agentCoordinate).cellType);
+
+        //Observe if the agent has already occupied the cell at the current coordinate
+        sensor.AddObservation((int)plot.CellInCoord(agentCoordinate).playerID == houseID? 1: 0);
+
         //Observe the horizontal neighbourhood to understand if there are occupied cells
-        //sensor.AddObservation(observations.horizNeighbourhood);
         sensor.AddObservation(plot.ReadSqrHorizNeighbors(agentCoordinate));
 
         //observe the size of the agent house
-        //sensor.AddObservation(observations.currentSize);
         sensor.AddObservation(plot.EqualIDsCount(houseID));
 
         //observe the agent house target size
         sensor.AddObservation(houseTargetSize);
 
         //observe the type of cell casting a shadow on
-        //sensor.AddObservation(observations.shadowOnCellType);
         sensor.AddObservation(ShadowingCellType());
 
-        //TOTAL OBSERVATIONS = 15
+        //observe the type of cell casting a shadow on
+        sensor.AddObservation(IsWithinHeight()? 1 : 0);
+
+        //Observe if the agent is precluding access to open air to its inmediate neighbourhood
+        sensor.AddObservation(plot.IsHorizNeighbourhoodPacked(agentCoordinate));
+
+        //TOTAL OBSERVATIONS = 18
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
 
-        if (isActive)
+        //Action - choose one of the 7 possible directions (the last means iddle)
+        int directionAction = actions.DiscreteActions[0];
+        //Action - decide whether to occupy the position or not
+        int occupyAction = actions.DiscreteActions[1];
+
+        houseCurrentSize = (byte)plot.EqualIDsCount(houseID);
+
+        if (houseCurrentSize <= houseTargetSize)
         {
-
-            UpdateObservations();
-
-            int housePreviousSize = houseCurrentSize;
-
-            //Action - choose one of the 7 possible directions (the last means iddle)
-            int directionAction = actions.DiscreteActions[0];
+            isActive = true;
+            //after it has completed the housing programme stops moving
             MoveOne(directionAction);
 
-            //Action - decide whether to occupy the position or not
-            int occupyAction = actions.DiscreteActions[1];
             if (occupyAction == 1)
             {
-                //Determine the type of cell we are casting a shadow on
-                int shadowValue = observations.shadowOnCellType;
+                ///Following the same order as the observations 
+                ///Prepare some parameters to decide rewards
+                
+                int emptyNeighbours = plot.GetNeighborhoodValue(agentCoordinate)[0];
+                int occupiedNeighbours = plot.GetNeighborhoodValue(agentCoordinate)[1];
+                int openProtectedNeighbours = plot.GetNeighborhoodValue(agentCoordinate)[2];
+                int selfNeighbourhood = ReadSelfNeighbor();
+                int previousCellType = (int)plot.CellInCoord(agentCoordinate).cellType;
+                bool positionAlreadyOccupiedByAgent = plot.CellInCoord(agentCoordinate).playerID == houseID ? true : false;
+                int horizNeighbourhood = plot.ReadSqrHorizNeighbors(agentCoordinate);
+                int previousSize = houseCurrentSize;
+                int shadowValue = plot.ShadowingAnotherCell(agentCoordinate);
+                bool isWithinHeight = IsWithinHeight();
+                
+
+                ///NEGATIVE REWARDS
+                ///if shadow on protected ground floor space
                 if (shadowValue < 0)
                 {
                     AddReward(-2f);
                     InstantiateFailedOccupation();
+                    return;
                 }
-                else
+
+                if (previousCellType == (int)CellType.OPENAIR || previousCellType == (int)CellType.OCCUPIED)
                 {
-                    //Previous cell type at the current coordinate
-                    int previousCellType = observations.currentCellType;
-
-
-                    OccupyCell();
-                    UpdateObservations();
-                    UpdateCurrentSize();
-
-                    //ADD REWARDS BASED ON THE ACTIONS' RESULTS
-
-                    //Reward according to the previous type of the cell just occupied
-                    if (previousCellType == (int)CellType.OPENAIR) AddReward(-2f);
-                    if (previousCellType == (int)CellType.OCCUPIED) AddReward(-1.5f);
-
-                    //Check the height policy 
-                    IsWithinHeight();
-
-                    //Reward positions that are not in isolation with regards to the player other positions
-
-                    if (observations.selfNeighbourhood == 0 && houseCurrentSize > 1) AddReward(-1f);
-                    else AddReward(0.2f);
-
-                    if (observations.horizNeighbourhood == 15) AddReward(-1);
-
-                    AddReward(-0.1f * agentCoordinate.Y); //small negative reward for building higher
-
-                    //Reward growth and proximity to targeted size
-                    if (houseCurrentSize < houseTargetSize && houseCurrentSize > housePreviousSize) AddReward(1f);
-                    else if (houseCurrentSize > houseTargetSize) AddReward(-0.2f * (houseTargetSize - houseCurrentSize));
-                    else if (houseCurrentSize == houseTargetSize) AddReward(1f);
+                    AddReward(-1f);
+                    InstantiateFailedOccupation();
+                    return;
                 }
+
+                ///If not shadowing a protected space
+                OccupyCell();
+                ///UpdateObservations();
+                UpdateCurrentSize();
+
+
+
+                ///POSITIVE REWARDS
+                if (emptyNeighbours == 0) AddReward(0.5f);
+                if (openProtectedNeighbours > 0) AddReward(0.5f);
+                if (previousSize < houseCurrentSize) AddReward(0.5f);
+                if (isWithinHeight) AddReward(0.5f);
+                AddReward( 2 / houseTargetSize);
+
+                ///NEGATIVE REWARDS
+                if (occupiedNeighbours == 63) AddReward(-1f);
+                if (selfNeighbourhood == 0 && houseCurrentSize > 0) AddReward(-1f);
+                if (positionAlreadyOccupiedByAgent) AddReward(-0.5f);
+                if (horizNeighbourhood == 15) AddReward(-2);
+                if (plot.IsHorizNeighbourhoodPacked(agentCoordinate) > 0) AddReward(-2f);
+
+                AddReward(-0.1f * agentCoordinate.Y); //small negative reward for building higher
             }
         }
+        else if (houseCurrentSize > houseTargetSize) { isActive = false; }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -372,7 +353,6 @@ public class HouseAgentScript : Agent
         else if (Input.GetKey(KeyCode.D)) directionAction = 3;
         else if (Input.GetKey(KeyCode.E)) directionAction = 4;
         else if (Input.GetKey(KeyCode.Q)) directionAction = 5;
-
 
         int occupyAction = (Input.GetKey(KeyCode.T)) ? 1 : 0;
 

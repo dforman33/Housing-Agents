@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3697595928735911465}
   - component: {fileID: 3697595928735911467}
   - component: {fileID: 3697595928735911466}
-  - component: {fileID: 3697595928735911476}
+  - component: {fileID: -1090067012224759252}
   m_Layer: 0
-  m_Name: Scene07_Plot3D
+  m_Name: Scene08_Plot3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,7 +72,7 @@ MonoBehaviour:
   GroundOpenSpace: {fileID: 1070282286005765536, guid: 93352e2f772bf634d9422a8d62a21216, type: 3}
   HouseCreator: {fileID: 422832400408305419, guid: 5efc3b693ed79ed48b768c3391c57f71, type: 3}
   FailedOccupation: {fileID: 5872526976459809534, guid: cbe9c804e3aeb764799811630cae10c6, type: 3}
---- !u!114 &3697595928735911476
+--- !u!114 &-1090067012224759252
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,13 +81,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 3697595928735911464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c449ba57762e1f46a0f5414dea6d9e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 72d2d559c548078488e1c09ce65b9667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   developmentTargetSize: 0
+  occupationCount: 0
+  occupationFootprint: 0
+  environmentResets: 0
+  activePlayers: 0
+  inactivePlayers: 0
   numberOfPlayers: 4
-  MaxEnvironmentSteps: 5400
-  maxMoveSteps: 30
-  occupationTimer: 0
-  reachStableState: 0
+  minNumberOfPlayers: 4
+  MaxEnvironmentSteps: 3600
+  envMoveSteps: 0
+  playerTimer: 180
+  playerMovesLimit: 15
+  reachStableStateOn: 0
+  AgentsList: []

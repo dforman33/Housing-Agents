@@ -227,7 +227,8 @@ public class HouseAgentScene06 : Agent
         //Get agent prefab
         houseCreatorAgentPrefab = plot.controller.HouseCreator;
         houseCreatorAgentPrefab = Instantiate(houseCreatorAgentPrefab, Vector3.zero, Quaternion.identity);
-        plot.AddPlotConstraints();
+        int openSpaceThreshold = 75;
+        plot.AddPlotConstraints(openSpaceThreshold);
 
         //Subscribe to events
         OnBoundaryCoordinate += Agent_OnBoundaryCoordinate;
@@ -253,7 +254,8 @@ public class HouseAgentScene06 : Agent
 
     public override void OnEpisodeBegin()
     {
-        plot.AddPlotConstraints();
+        int openSpaceThreshold = 75;
+        plot.AddPlotConstraints(openSpaceThreshold);
         AgentInit(1);
     }
 

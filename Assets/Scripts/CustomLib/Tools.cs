@@ -29,6 +29,7 @@ namespace Custom
         public static Color GetColor(int id)
         {
             Color result;
+            id = id % 24;
             switch (id)
             {
                 case 0: //initial state
@@ -47,64 +48,64 @@ namespace Custom
                     result = HexToRGB("#ff6d00"); //Dark orange
                     break;
                 case 5:
-                    result = HexToRGB("#00b4d8");
+                    result = HexToRGB("#0609c6"); //B
                     break;
                 case 6:
-                    result = HexToRGB("#48cae4");
+                    result = HexToRGB("#2c6d52"); //G
                     break;
                 case 7:
-                    result = HexToRGB("#023e8a");
+                    result = HexToRGB("#cd184b"); //R
                     break;
                 case 8:
-                    result = HexToRGB("#2d6a4f");
+                    result = HexToRGB("#b34d00"); //O
                     break;
                 case 9:
-                    result = HexToRGB("#40916c");
+                    result = HexToRGB("#2024f8"); //B
                     break;
                 case 10:
-                    result = HexToRGB("#52b788");
+                    result = HexToRGB("#49b689");//G
                     break;
                 case 11:
-                    result = HexToRGB("#74c69d");
+                    result = HexToRGB("#ea4876"); //R
                     break;
                 case 12:
-                    result = HexToRGB("#95d5b2");
+                    result = HexToRGB("#ffa866"); //O
                     break;
                 case 13:
-                    result = HexToRGB("#0077b6");
+                    result = HexToRGB("#9c9efc"); //B
                     break;
                 case 14:
-                    result = HexToRGB("#a4133c");
+                    result = HexToRGB("#92d3b8"); //G
                     break;
                 case 15:
-                    result = HexToRGB("#c9184a");
+                    result = HexToRGB("#cc0000"); //R
                     break;
                 case 16:
-                    result = HexToRGB("#ff4d6d");
+                    result = HexToRGB("#ff9900"); //O
                     break;
                 case 17:
-                    result = HexToRGB("#ff758f");
+                    result = HexToRGB("#0066ff"); //B
                     break;
                 case 18:
-                    result = HexToRGB("#ff8fa3");
+                    result = HexToRGB("#00cc00"); //G
                     break;
                 case 19:
-                    result = HexToRGB("#0096c7");
+                    result = HexToRGB("#ff6666"); //R
                     break;
                 case 20:
-                    result = HexToRGB("#ff7900");
+                    result = HexToRGB("#ffcc80"); //O
                     break;
                 case 21:
-                    result = HexToRGB("#ff8500");
+                    result = HexToRGB("#003d99"); //B
                     break;
                 case 22:
-                    result = HexToRGB("#ff9100");
+                    result = HexToRGB("#4dff4d"); //G
                     break;
                 case 23:
-                    result = HexToRGB("#ff9e00");
+                    result = HexToRGB("#990000"); //R
                     break;
                 case 24:
-                    result = HexToRGB("#ffaa00");
+                    result = HexToRGB("#b36b00"); //O
                     break;
                 default:
                     result = Color.white;

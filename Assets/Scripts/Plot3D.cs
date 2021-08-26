@@ -9,9 +9,9 @@ public class Plot3D : MonoBehaviour
 {
     [Header("Initial state setting out")]
 
-    public int width = 9; //x length
-    public int height = 11; //y height
-    public int depth = 9; //z length
+    public int width = 10; //x length
+    public int height = 10; //y height
+    public int depth = 10; //z length
     public float scale = 1;
 
     public int minHeight = 3; //y height
@@ -28,14 +28,20 @@ public class Plot3D : MonoBehaviour
     //EVENTS
     public event Action<int> OnOccupyCell;
 
-    public void ResetBoard(int newWidth, int newHeight, int newDepth)
+    public void ResetBoard(int newWidth, int newHeight, int newDepth, int openSpaceThreshold)
     {
-        foreach (var cell in cells) { if(cell.gameObject != null) Destroy(cell.gameObject); }
-        width = newWidth;
-        height = newHeight;
-        depth = newDepth;
+        this.width = newWidth;
+        this.height = newHeight;
+        this.depth = newDepth;
+
+        foreach (var cell in cells) 
+        { 
+            try { Destroy(cell.gameObject); } 
+            catch { } 
+        }
+        
         SetupBoard();
-        AddPlotConstraints();
+        AddPlotConstraints(openSpaceThreshold);
     }
     /// <summary>
     /// Method that instantiates the necessary parameters for the plot3D and generates a three-dimensional array of cells to record and assess moves from players.
@@ -45,6 +51,7 @@ public class Plot3D : MonoBehaviour
         controller = GetComponent<CellStateController>();
 
         cells = new Cell3D[width, height, depth];
+
         for (int y = 0; y < height; y++)
         {
             for (int z = 0; z < depth; z++)
@@ -82,12 +89,13 @@ public class Plot3D : MonoBehaviour
     /// Generates the ground floor, skyline and sets the edge cells as open space
     /// </summary>
     /// <returns>Open space cells at the four sides of the array.</returns>
-    public void AddPlotConstraints()
+    public void AddPlotConstraints(int openSpaceThreshold)
     {
         CleanBoard();
         maxHeight = maxHeight <= height - 2 ? maxHeight : height - 2;
         heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
-        openGFMap = new OpenGFGenerator(this, 1, 75).openGFMap;
+        int numAttractors = width * depth < 1 ? 1 + 1 : (int)((width * depth) / 100);
+        openGFMap = new OpenGFGenerator(this, numAttractors, openSpaceThreshold).openGFMap;
 
         AddEmptySides();
         AddSkyLine();
@@ -224,7 +232,6 @@ public class Plot3D : MonoBehaviour
                 {
                     if (RayCast(new Coordinate3D(x, 0, z), sunReverseDirection, "CellOccupied"))
                     {
-                        Debug.Log("Cell is occluding Open Space for OS: " + x + "," + z);
                         count++;
                         Vector3 start = Navigation.GetPosition(new Coordinate3D(x, 0, z), scale,transform.position);
                         Vector3 end = start + sunReverseDirection.normalized * height;
@@ -303,6 +310,23 @@ public class Plot3D : MonoBehaviour
     }
 
     /// <summary>
+    /// Evaluates the horizontal square neighbours to see if the current position will pack them completely, precluding access to open air.
+    /// </summary>
+    /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
+    /// <returns>1 if precludes position to the right, 2 to the left, 3 to the front, 4 to the back and returns 0 if neighbourhood is not packed.</returns>
+    public int IsHorizNeighbourhoodPacked(Coordinate3D coord)
+    {
+        if (coord.X <= 1 || coord.X >= width - 2 || coord.Y <= 1 || coord.Y >= height - 2 || coord.Z <= 1 || coord.Z >= depth - 2)
+            return 0;
+        if (ReadSqrHorizNeighbors(coord + Navigation.directions3D[(int)DirectionChoice.Right]) == 15) return 1;
+        if (ReadSqrHorizNeighbors(coord + Navigation.directions3D[(int)DirectionChoice.Left]) == 15) return 2;
+        if (ReadSqrHorizNeighbors(coord + Navigation.directions3D[(int)DirectionChoice.Front]) == 15) return 3;
+        if (ReadSqrHorizNeighbors(coord + Navigation.directions3D[(int)DirectionChoice.Back]) == 15) return 4;
+
+        return 0;
+    }
+
+    /// <summary>
     /// Returns an array of 3 values corrrespoding to the empty, occupied and open space binary numbers. 
     /// </summary>
     /// <param name="coord">A coordinate3D with the array's position defining the neighborhood.</param>
@@ -344,10 +368,14 @@ public class Plot3D : MonoBehaviour
     public int ReadSqrHorizNeighbors(Coordinate3D coord)
     {
         int result = 0;
-        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Front]).cellType == CellType.OCCUPIED ? 1 : 0;
-        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Back]).cellType == CellType.OCCUPIED ? 2 : 0;
-        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Left]).cellType == CellType.OCCUPIED ? 4 : 0;
-        result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Right]).cellType == CellType.OCCUPIED ? 8 : 0;
+        try
+        {
+            result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Front]).cellType == CellType.OCCUPIED ? 1 : 0;
+            result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Back]).cellType == CellType.OCCUPIED ? 2 : 0;
+            result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Left]).cellType == CellType.OCCUPIED ? 4 : 0;
+            result += CellInCoord(coord + Navigation.directions3D[(int)DirectionChoice.Right]).cellType == CellType.OCCUPIED ? 8 : 0;
+        }
+        catch { }
         return result;
     }
 
@@ -374,7 +402,9 @@ public class Plot3D : MonoBehaviour
     /// <returns>The cell at the specific coordinate.</returns>
     public Cell3D CellInCoord(Coordinate3D coord)
     {
-        return cells[coord.X, coord.Y, coord.Z];
+        try { return cells[coord.X, coord.Y, coord.Z]; }
+        catch { return null; }
+        
     }
 
     /// <summary>
@@ -387,7 +417,41 @@ public class Plot3D : MonoBehaviour
         int count = 0;
         foreach (var cell in cells) { if (cell.playerID == playerID) count++; }
         return count;
+    }
+
+    /// <summary>
+    /// Evaluates the plot to count the number of cells of a given type.
+    /// </summary>
+    /// <param name="celltype">The type of cell, generally three values are considered: EMPTY, OCCUPIED, OPEN SPACE.</param>
+    /// <returns>An integer that is the sum of all values with the same player ID.</returns>
+    public int CellTypeCount(CellType celltype)
+    {
+        int count = 0;
+        foreach (var cell in cells) { if (cell.cellType == celltype) count++; }
+        return count;
 
     }
 
+    /// <summary>
+    /// Evaluates the footprint of a given type of cells, This is the area 2D projection.
+    /// </summary>
+    /// <param name="celltype">The type of cell, generally three values are considered: EMPTY, OCCUPIED, OPEN SPACE.</param>
+    /// <returns>An integer that is the sum of all values with the same player ID.</returns>
+    public int CellTypeFootprint(CellType celltype)
+    {
+        int count = 0;
+        for (int z = 0; z < depth; z++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                bool xzOccupied = false;
+                for (int y = 0; y < height; y++)
+                {
+                    if (cells[x,y,z].cellType == celltype) xzOccupied = true;
+                }
+                count += xzOccupied ? 1 : 0;
+            }
+        }
+        return count;
+    }
 }
