@@ -48,7 +48,7 @@ public class Scene08Environment : MonoBehaviour
     [HideInInspector] public List<HouseAgentScript> AgentsList = new List<HouseAgentScript>();
 
 
-
+     
     /// METHODS
 
     /// <summary>

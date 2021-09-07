@@ -15,19 +15,23 @@ public class TextDisplay8 : MonoBehaviour
     }
     private void Update()
     {
-        textToDisplay.text = $"Environment 1 " +
-            $"\nNumber of resets: {scene.environmentResets}" +
-            $"\nTime elapsed: {scene.envMoveSteps/60} of {scene.MaxEnvironmentSteps/60}" +
-            $"\nTotal number of players: {scene.numberOfPlayers}" +
-            $"\nNumber of active players: {scene.activePlayers}" + 
-            $"\nNumber of inactive players: {scene.inactivePlayers}"+
-            $"\nTargeted occupation: {scene.occupationTarget}" +
-            $"\nInitial cells available: {scene.availableCellsCount}" +
-            $"\nEmpty cells remaining: {scene.emptyCellsCount}" +
-            $"\nPercentage of occupation: {100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 2)}%" +
-            $"\nOccupation rate limit allowed: {scene.occupationRateLimit}" +
-            $"\nOccupied cells: {scene.occupationCount}" +
-            $"\nOccupied footprint: {scene.occupationFootprint}" +
-            $"\nRatio between ocupied cells and footprint: {System.Math.Round((double)(scene.occupationCount / (double)scene.occupationFootprint), 2)}";
+        textToDisplay.text = $"BASIC ENVIROMNENT PARAMETERS:"
+            + $"\nNumber of resets: {scene.environmentResets}"
+            + $"\nNumber of active players: {scene.activePlayers}"
+            + $"\nNumber of inactive players: {scene.inactivePlayers}"
+            + $"\nTargeted occupation: {scene.occupationTarget}"
+            + $"\nInitial cells available: {scene.availableCellsCount}"
+            + $"\nEmpty cells remaining: {scene.emptyCellsCount}"
+            + $"\nOccupied cells: {scene.occupationCount}"
+            + $"\nOccupied footprint: {scene.occupationFootprint}"
+            + $"\nOccupation target: {100 * System.Math.Round(scene.occupationRateLimit, 2)}%"
+            
+            //DISPLAY EVALUATION PARAMETERS
+            + $"\n \nEVALUATION PARAMETERS:"
+            + $"\nOccupancy ratio (% of initial available cells): {100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 2)}%"
+            + $"\nAgents added: {scene.numberOfPlayers}"
+            + $"\nOccupied area to footprint ratio (FAR): {System.Math.Round((double)(scene.occupationCount / (double)scene.occupationFootprint), 2)}"
+            + $"\nTime elapsed: {scene.envMoveSteps / 60}"
+            ;
     }
 }
