@@ -24,13 +24,13 @@ public class TextDisplay8 : MonoBehaviour
             + $"\nEmpty cells remaining: {scene.emptyCellsCount}"
             + $"\nOccupied cells: {scene.occupationCount}"
             + $"\nOccupied footprint: {scene.occupationFootprint}"
+            + $"\nPlot footprint (sq. units): {scene.plot.footprintArea}"
             + $"\nOccupation target: {100 * System.Math.Round(scene.occupationRateLimit, 2)}%"
             
-            //DISPLAY EVALUATION PARAMETERS
             + $"\n \nEVALUATION PARAMETERS:"
             + $"\nOccupancy ratio (% of initial available cells): {100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 2)}%"
             + $"\nAgents added: {scene.numberOfPlayers}"
-            + $"\nOccupied area to footprint ratio (FAR): {System.Math.Round((double)(scene.occupationCount / (double)scene.occupationFootprint), 2)}"
+            + $"\nOccupied area to footprint ratio (FAR): {System.Math.Round((double)(scene.occupationCount / (double)scene.plot.footprintArea), 2)}"
             + $"\nTime elapsed: {scene.envMoveSteps / 60}"
             ;
     }

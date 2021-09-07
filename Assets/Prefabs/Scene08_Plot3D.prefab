@@ -52,6 +52,7 @@ MonoBehaviour:
   minHeight: 3
   maxHeight: 8
   addHardCodedOccupied: 0
+  footprintArea: 0
   controller: {fileID: 0}
 --- !u!114 &3697595928735911466
 MonoBehaviour:
@@ -84,18 +85,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d2d559c548078488e1c09ce65b9667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  plot: {fileID: 0}
   controller: {fileID: 0}
-  developmentTargetSize: 0
+  occupationTarget: 0
   occupationCount: 0
+  availableCellsCount: 0
+  emptyCellsCount: 0
   occupationFootprint: 0
   environmentResets: 0
   activePlayers: 0
   inactivePlayers: 0
   numberOfPlayers: 4
+  envMoveSteps: 0
+  occupationRateLimit: 0
   minNumberOfPlayers: 4
   MaxEnvironmentSteps: 3600
-  envMoveSteps: 0
   playerTimer: 180
   playerMovesLimit: 15
   reachStableStateOn: 0
+  displaySunRays: 0
+  occupationRateToAddPlayer: 0
+  prohibitOccupyBuiltCells: 1
+  penaliseNonEmptyCellsOccupation: 0
+  penaliseBuildingHigher: 0
+  rewardEmptyNeighbourhood: 0
+  rewardAccessToAir: 0
+  rewardAccessToAirOfOthers: 0
+  rewardProximityToGreenAreas: 0
+  rewardSpeedMeetingTarget: 0
+  rewardAddedAgents: 0
+  reward_FAR: 0
   AgentsList: []

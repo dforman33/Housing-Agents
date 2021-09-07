@@ -30,8 +30,27 @@ public class HouseAgentScript : Agent
     [HideInInspector] public int maxX;
     [HideInInspector] public int maxY;
     [HideInInspector] public int maxZ;
+    [HideInInspector] public int movesToTarget = 0;
 
     [HideInInspector] public bool isActive;
+
+    //Agent Enhanced Configurations
+    //Prohibit occupation of already occupied cells
+    [HideInInspector] public bool prohibitOccupyBuiltCells = true;
+    //Penalise the occupation of protected or already occupied cells
+    [HideInInspector] public bool penaliseNonEmptyCellsOccupation = true;
+    //Penalise the occupation of higher positions
+    [HideInInspector] public bool penaliseBuildingHigher = true;
+    //Rewards ocuppation on completely empty neighbourhoods
+    [HideInInspector] public bool rewardEmptyNeighbourhood = true;
+    //Rewards occupation of possitions with access to open air on at least one horizontal face
+    [HideInInspector] public bool rewardAccessToAir = true;
+    //Rewards occupation of possitions that still allow others access to open air on at least one horizontal face
+    [HideInInspector] public bool rewardAccessToAirOfOthers = true;
+    //Rewards occupation of possitions inmediately close to green open areas
+    [HideInInspector] public bool rewardProximityToGreenAreas = true;
+    //Rewards speed to complete target
+    [HideInInspector] public bool rewardSpeedMeetingTarget = true;
 
     //EVENTS
     //OnBoundaryCoordinate is invoked in the Clamp() method.
@@ -130,6 +149,7 @@ public class HouseAgentScript : Agent
         }
         else { return; }
         transform.localPosition = Navigation.GetPosition(agentCoordinate, scale);
+        movesToTarget++;
     }
 
     /// <summary>
@@ -178,9 +198,6 @@ public class HouseAgentScript : Agent
         failedObject.transform.localPosition = Navigation.GetPosition(agentCoordinate, scale);
         Destroy(failedObject, timeAlive);
     }
-
-    /*TEST
-     * */
 
     /// <summary>
     /// returns an array of size three invoking the GetNeighborhoodValue() method within the plot3D class.
@@ -275,7 +292,7 @@ public class HouseAgentScript : Agent
 
         houseCurrentSize = (byte)plot.EqualIDsCount(houseID);
 
-        if (houseCurrentSize <= houseTargetSize)
+        if (houseCurrentSize < houseTargetSize)
         {
             isActive = true;
             //after it has completed the housing programme stops moving
@@ -307,11 +324,21 @@ public class HouseAgentScript : Agent
                     return;
                 }
 
-                if (previousCellType == (int)CellType.OPENAIR || previousCellType == (int)CellType.OCCUPIED)
+                if (previousCellType == (int)CellType.OPENAIR)
                 {
-                    AddReward(-1f);
+                    if(penaliseNonEmptyCellsOccupation) AddReward(-2f);
                     InstantiateFailedOccupation();
                     return;
+                }
+
+                if(previousCellType == (int)CellType.OCCUPIED)
+                {
+                    if (penaliseNonEmptyCellsOccupation) AddReward(-1f);
+                    if (prohibitOccupyBuiltCells)
+                    {
+                        InstantiateFailedOccupation();
+                        return;
+                    }
                 }
 
                 ///If not shadowing a protected space
@@ -322,21 +349,26 @@ public class HouseAgentScript : Agent
 
 
                 ///POSITIVE REWARDS
-                if (emptyNeighbours == 0) AddReward(0.5f);
-                if (openProtectedNeighbours > 0) AddReward(0.5f);
+                if (emptyNeighbours == 0 && rewardEmptyNeighbourhood) AddReward(0.5f);
+                if (openProtectedNeighbours > 0 && rewardProximityToGreenAreas) AddReward(0.5f);
                 if (previousSize < houseCurrentSize) AddReward(0.5f);
-                if (isWithinHeight) AddReward(0.5f);
+                if (isWithinHeight) AddReward(1f);
                 AddReward( 2 / houseTargetSize);
 
                 ///NEGATIVE REWARDS
                 if (occupiedNeighbours == 63) AddReward(-1f);
                 if (selfNeighbourhood == 0 && houseCurrentSize > 0) AddReward(-1f);
                 if (positionAlreadyOccupiedByAgent) AddReward(-0.5f);
-                if (horizNeighbourhood == 15) AddReward(-2);
-                if (plot.IsHorizNeighbourhoodPacked(agentCoordinate) > 0) AddReward(-2f);
+                if (horizNeighbourhood == 15 && rewardAccessToAir) AddReward(-2f);
+                if (plot.IsHorizNeighbourhoodPacked(agentCoordinate) > 0 && rewardAccessToAirOfOthers) AddReward(-2f);
 
-                AddReward(-0.1f * agentCoordinate.Y); //small negative reward for building higher
+                if(penaliseBuildingHigher) AddReward(-0.1f * agentCoordinate.Y); //small negative reward for building higher
             }
+        } 
+        else if (houseCurrentSize == houseTargetSize && isActive)
+        {
+            isActive = false;
+            if(rewardSpeedMeetingTarget) AddReward(10 * houseTargetSize / (float) movesToTarget );
         }
         else if (houseCurrentSize > houseTargetSize) { isActive = false; }
     }

@@ -38,8 +38,34 @@ public class Scene08Environment : MonoBehaviour
     [SerializeField] private int playerTimer = 180;
     [SerializeField] private int playerMovesLimit = 15;
     [SerializeField] private bool reachStableStateOn = false;
+    [SerializeField] private bool displaySunRays = false;
     [SerializeField] private float occupationRateToAddPlayer;
-    
+   
+
+    [Header("Agent Enhanced Configurations")]
+    //Prohibit occupation of already occupied cells
+    [SerializeField] private bool prohibitOccupyBuiltCells = true;
+    //Penalise the occupation of protected or already occupied cells
+    [SerializeField] private bool penaliseNonEmptyCellsOccupation = true;
+    //Penalise the occupation of higher positions
+    [SerializeField] private bool penaliseBuildingHigher = true;
+    //Rewards ocuppation on completely empty neighbourhoods
+    [SerializeField] private bool rewardEmptyNeighbourhood = true;
+    //Rewards occupation of possitions with access to open air on at least one horizontal face
+    [SerializeField] private bool rewardAccessToAir = true;
+    //Rewards occupation of possitions that still allow others access to open air on at least one horizontal face
+    [SerializeField] private bool rewardAccessToAirOfOthers = true;
+    //Rewards occupation of possitions inmediately close to green open areas
+    [SerializeField] private bool rewardProximityToGreenAreas = true;
+    //Rewards speed to complete target
+    [SerializeField] private bool rewardSpeedMeetingTarget = true;
+
+    [Header("Environment Enhanced Configurations")]
+    //Rewards addition of new agents (new agents are added only when others have fulfilled their brief)
+    [SerializeField] private bool rewardAddedAgents = true;
+    //Rewards the floor to area
+    [SerializeField] private bool reward_FAR = true;
+
 
     private int playerMoves = 0;
     private int currentPlayer;
@@ -113,6 +139,7 @@ public class Scene08Environment : MonoBehaviour
 
 
         ParameterSetup();
+        numberOfPlayers = minNumberOfPlayers;
 
         AgentsList.Clear();
         AgentsList.AddRange(tempAgentsList);
@@ -126,10 +153,6 @@ public class Scene08Environment : MonoBehaviour
             occupationTarget += agent.houseTargetSize;
         }
 
-        foreach (var agent in AgentsList)
-        {
-            Debug.Log($"Agent {agent.houseID} target size: {agent.houseTargetSize}");
-        }
     }
 
     void ParameterSetup()
@@ -144,10 +167,12 @@ public class Scene08Environment : MonoBehaviour
         playerMoves = 0;
         playerTimer = 0;
         occupationCount = 0;
-        numberOfPlayers = minNumberOfPlayers;
+        numberOfPlayers = 0;
         currentPlayer = 1;
         availableCellsCount = plot.CellTypeCount(CellType.EMPTY);
         emptyCellsCount = availableCellsCount;
+
+        if (displaySunRays) plot.ShowSunRays();
     }
 
     /// <summary>
@@ -160,13 +185,26 @@ public class Scene08Environment : MonoBehaviour
         instance.transform.parent = transform;
         instance.name = $"houseID-{numberOfPlayers}";
         HouseAgentScript houseAgent = instance.GetComponent<HouseAgentScript>();
+        AgentTrainConfig(houseAgent);
         houseAgent.AgentInit((byte)numberOfPlayers, (byte)UnityEngine.Random.Range(6, 12), this.plot);
         AgentsList.Add(houseAgent);
         multiAgentGroup.RegisterAgent(AgentsList[numberOfPlayers - 1]);
         occupationTarget += houseAgent.houseTargetSize;
         Debug.Log($"Player {numberOfPlayers} added, occupation target now is {occupationTarget}.");
+    }
+
+    public void AgentTrainConfig(HouseAgentScript hAgent)
+    {
+        hAgent.penaliseNonEmptyCellsOccupation = penaliseNonEmptyCellsOccupation;
+        hAgent.penaliseBuildingHigher = penaliseBuildingHigher;
+        hAgent.rewardEmptyNeighbourhood = rewardEmptyNeighbourhood;
+        hAgent.rewardAccessToAir = rewardAccessToAir;
+        hAgent.rewardAccessToAirOfOthers = rewardAccessToAirOfOthers;
+        hAgent.rewardProximityToGreenAreas = rewardProximityToGreenAreas;
+        hAgent.rewardSpeedMeetingTarget = rewardSpeedMeetingTarget;
 
     }
+    
 
 
     /*
@@ -189,7 +227,7 @@ public class Scene08Environment : MonoBehaviour
         UpdatePlayer();
         UpdateOccupationCountAndFootprint();
         multiAgentGroup.AddGroupReward((float)occupationCount / (float)occupationTarget);
-        multiAgentGroup.AddGroupReward((float)occupationCount / (float)occupationFootprint);
+        if(reward_FAR) multiAgentGroup.AddGroupReward((float)occupationCount / (float)plot.footprintArea);
         playerTimer = 0;
     }
 
@@ -217,14 +255,7 @@ public class Scene08Environment : MonoBehaviour
 
         for (int p = 0; p < minNumberOfPlayers; p++)
         {
-            GameObject instance = Instantiate<GameObject>(controller.HouseCreator, Vector3.zero + transform.localPosition, Quaternion.identity);
-            instance.transform.parent = transform;
-            instance.name = $"houseID-{p+1}";
-            HouseAgentScript houseAgent = instance.GetComponent<HouseAgentScript>();
-            houseAgent.AgentInit((byte)(p+1), (byte)UnityEngine.Random.Range(6, 12), this.plot);
-            AgentsList.Add(houseAgent);
-            multiAgentGroup.RegisterAgent(AgentsList[p]);
-            occupationTarget += houseAgent.houseTargetSize;
+            AddAgent();
         }
     }
 
@@ -254,7 +285,7 @@ public class Scene08Environment : MonoBehaviour
 
         if (occupationCount >= occupationTarget && plot.CellTypeCount(CellType.EMPTY) > 15 && occupationCount/(float)availableCellsCount < occupationRateToAddPlayer )
         {
-            multiAgentGroup.AddGroupReward(10f);
+            if (rewardAddedAgents) multiAgentGroup.AddGroupReward(10f);
             AddAgent();
         }
 

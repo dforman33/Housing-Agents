@@ -55,7 +55,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 0a5e526b077bc164798479729458e153, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: HouseBehaviourScene7
@@ -86,7 +86,16 @@ MonoBehaviour:
   maxX: 0
   maxY: 0
   maxZ: 0
+  movesToTarget: 0
   isActive: 0
+  prohibitOccupyBuiltCells: 1
+  penaliseNonEmptyCellsOccupation: 1
+  penaliseBuildingHigher: 1
+  rewardEmptyNeighbourhood: 1
+  rewardAccessToAir: 1
+  rewardAccessToAirOfOthers: 1
+  rewardProximityToGreenAreas: 1
+  rewardSpeedMeetingTarget: 1
 --- !u!1001 &5849861326598413422
 PrefabInstance:
   m_ObjectHideFlags: 0

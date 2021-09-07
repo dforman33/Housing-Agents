@@ -23,16 +23,35 @@ public class Plot3D : MonoBehaviour
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public int[,] heightMap;
     [HideInInspector] public int[,] openGFMap;
+    [HideInInspector] public int footprintArea;
     [HideInInspector] public CellStateController controller;
 
     //EVENTS
     public event Action<int> OnOccupyCell;
+
+    public void ShowSunRays()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                if (openGFMap[x, z] == 1)
+                {
+                    Vector3 rayStart = cells[x, 0, z].cellPos;
+                    Vector3 rayEnd = rayStart + 100 * sunReverseDirection;
+                    Debug.DrawLine(rayStart, rayEnd, Color.grey, 10f);
+                    Debug.Log($"ray sarts at {rayStart} and ray ends at {rayEnd}");
+                }
+            }
+        }      
+    }
 
     public void ResetBoard(int newWidth, int newHeight, int newDepth, int openSpaceThreshold)
     {
         this.width = newWidth;
         this.height = newHeight;
         this.depth = newDepth;
+        footprintArea = width * depth;
 
         foreach (var cell in cells) 
         { 
@@ -51,6 +70,7 @@ public class Plot3D : MonoBehaviour
         controller = GetComponent<CellStateController>();
 
         cells = new Cell3D[width, height, depth];
+        footprintArea = width * depth;
 
         for (int y = 0; y < height; y++)
         {

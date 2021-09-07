@@ -145,5 +145,10 @@ namespace Custom
             return gameObject;
         }
 
+        public static float RemapFloats(float value, float oldMin, float oldMax, float newLow, float newMax)
+        {
+            return newLow + (value - oldMin) * (newMax - newLow) / (oldMax - oldMin);
+        }
+
     }
 }
