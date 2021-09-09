@@ -31,7 +31,6 @@ public class TrainingEnvironment : MonoBehaviour
     [HideInInspector] public int inactivePlayers = 0;
     [HideInInspector] public int numberOfPlayers = 0;
     [HideInInspector] public int envMoveSteps = 0;
-    [HideInInspector] public float occupationRateLimit;
 
     [SerializeField] private int minNumberOfPlayers = 4;
     [SerializeField] public int MaxEnvironmentSteps = 3600;
@@ -42,7 +41,7 @@ public class TrainingEnvironment : MonoBehaviour
     [SerializeField] private float occupationRateToAddPlayer;
    
 
-    [Header("Agent Enhanced Configurations")]
+    [Header("Agent Enhanced Training Configurations")]
     //Prohibit occupation of already occupied cells
     [SerializeField] private bool prohibitOccupyBuiltCells = true;
     //Penalise the occupation of protected or already occupied cells
@@ -59,8 +58,11 @@ public class TrainingEnvironment : MonoBehaviour
     [SerializeField] private bool rewardProximityToGreenAreas = true;
     //Rewards speed to complete target
     [SerializeField] private bool rewardSpeedMeetingTarget = true;
+    //FURTHER IMPROVEMENT
+    //Agent continues to move seeking better results
+    [SerializeField] private bool continuesMoving = false;
 
-    [Header("Environment Enhanced Configurations")]
+    [Header("Environment Enhanced Training Configurations")]
     //Rewards addition of new agents (new agents are added only when others have fulfilled their brief)
     [SerializeField] private bool rewardAddedAgents = true;
     //Rewards the floor to area
@@ -74,12 +76,18 @@ public class TrainingEnvironment : MonoBehaviour
     [SerializeField] int plotMinHeight = 3;
     [Range(25, 75)]
     [SerializeField] public int openSpaceThreshold = 75;
+    [Range(0.15f, 0.45f)]
+    [SerializeField] public float occupationRateLimit;
 
     private int playerMoves = 0;
     private int currentPlayer;
 
     [HideInInspector] public SimpleMultiAgentGroup multiAgentGroup;
     [HideInInspector] public List<HouseAgentScript> AgentsList = new List<HouseAgentScript>();
+
+    //EVENTS
+    //occupancyRatio, numberOfPlayers, FAR, packedOccupiedCount, avgOccupiedHeight, envMoveSteps
+    public event Action<float, int, float, int, float, int> OnPlotReset;
 
 
 
@@ -132,6 +140,14 @@ public class TrainingEnvironment : MonoBehaviour
     /// </summary>
     public void ResetScene()
     {
+        float occupancyRatio = (float) (100 * System.Math.Round((double)(occupationCount / (double) availableCellsCount), 2));
+        float FAR = (float) (System.Math.Round((double)(occupationCount / (double) plot.footprintArea), 2));
+        float avgOccupiedHeight = plot.AverageOccupiedHeight();
+        
+        //OnPlotReset?.Invoke(5f, 6, 5f, 12, 1.2f, 12);
+        OnPlotReset?.Invoke(occupancyRatio, numberOfPlayers, FAR, packedOccupiedCount, avgOccupiedHeight, envMoveSteps);
+        Debug.Log($"{occupancyRatio},{numberOfPlayers},{FAR},{packedOccupiedCount},{avgOccupiedHeight},{envMoveSteps}");
+
         environmentResets++;
 
         if (!allowTesting)
@@ -185,7 +201,8 @@ public class TrainingEnvironment : MonoBehaviour
 
     void ParameterSetup()
     {
-        occupationRateLimit = UnityEngine.Random.Range(0.15f, 0.45f);
+        float newOccupationRateLimit = UnityEngine.Random.Range(0.15f, 0.45f);
+        occupationRateLimit = allowTesting ? occupationRateLimit : newOccupationRateLimit;
         occupationRateToAddPlayer = occupationRateLimit - 0.05f;
 
         occupationTarget = 0;
@@ -213,7 +230,7 @@ public class TrainingEnvironment : MonoBehaviour
         instance.transform.parent = transform;
         instance.name = $"houseID-{numberOfPlayers}";
         HouseAgentScript houseAgent = instance.GetComponent<HouseAgentScript>();
-        houseAgent.UpdateTrainConfig(prohibitOccupyBuiltCells, penaliseNonEmptyCellsOccupation, penaliseBuildingHigher, rewardEmptyNeighbourhood, rewardAccessToAir, rewardAccessToAirOfOthers, rewardProximityToGreenAreas, rewardSpeedMeetingTarget);
+        houseAgent.UpdateTrainConfig(prohibitOccupyBuiltCells, penaliseNonEmptyCellsOccupation, penaliseBuildingHigher, rewardEmptyNeighbourhood, rewardAccessToAir, rewardAccessToAirOfOthers, rewardProximityToGreenAreas, rewardSpeedMeetingTarget, continuesMoving);
         Debug.Log($"Agent prohibitOccupyBuiltCells set to: {houseAgent.prohibitOccupyBuiltCells}");
         houseAgent.AgentInit((byte)numberOfPlayers, (byte)UnityEngine.Random.Range(6, 12), this.plot);
         AgentsList.Add(houseAgent);
@@ -278,6 +295,8 @@ public class TrainingEnvironment : MonoBehaviour
 
     void Update()
     {
+        packedOccupiedCount = plot.CountPackedOccupiedCells();
+
         if (Input.GetKeyDown(KeyCode.Space)) ResetScene();
         if (Input.GetKeyDown(KeyCode.Alpha1)) AddAgent();
 
@@ -292,13 +311,14 @@ public class TrainingEnvironment : MonoBehaviour
 
         //If more than 1/3 of the maximum environment steps without occupying then terminate
         if (playerTimer >= 0.5f * MaxEnvironmentSteps && !reachStableStateOn)
-        {
+        { 
             //multiAgentGroup.GroupEpisodeInterrupted();
             ResetScene();
             multiAgentGroup.EndGroupEpisode();
         }
 
-        multiAgentGroup.AddGroupReward(-0.5f * (occupationTarget - occupationCount) / MaxEnvironmentSteps);
+        //Not too sure about this reward - perhaps comment in the next iteration
+        //multiAgentGroup.AddGroupReward(-0.5f * (occupationTarget - occupationCount) / MaxEnvironmentSteps);
 
         if (occupationCount >= occupationTarget && plot.CellTypeCount(CellType.EMPTY) > 15 && occupationCount/(float)availableCellsCount < occupationRateToAddPlayer )
         {
@@ -321,5 +341,15 @@ public class TrainingEnvironment : MonoBehaviour
         playerMoves++;
         envMoveSteps++;
         playerTimer++;
+    }
+
+    private void OnApplicationQuit()
+    {
+        float occupancyRatio = (float)(100 * System.Math.Round((double)(occupationCount / (double)availableCellsCount), 2));
+        float FAR = (float)(System.Math.Round((double)(occupationCount / (double)plot.footprintArea), 2));
+        float avgOccupiedHeight = plot.AverageOccupiedHeight();
+
+        OnPlotReset?.Invoke(occupancyRatio, numberOfPlayers, FAR, packedOccupiedCount, avgOccupiedHeight, envMoveSteps);
+
     }
 }

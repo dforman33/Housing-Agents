@@ -459,14 +459,16 @@ public class Plot3D : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Counts how many occupied cells do not have access to open air in any face.
+    /// </summary>
     public int CountPackedOccupiedCells()
     {
         int count = 0;
-        foreach (var cell in cells) 
-        { 
-            if (cell.cellType == CellType.OCCUPIED) 
-                if (ReadSqrNeighbors(cell.coordinate, CellType.OCCUPIED) == 15) 
-                    count++; 
+        foreach (var cell in cells)
+        {
+            if (cell.cellType == CellType.OCCUPIED)
+                if (ReadSqrHorizNeighbors(cell.coordinate) == 15) count++;
         }
         return count;
     }
@@ -492,5 +494,21 @@ public class Plot3D : MonoBehaviour
             }
         }
         return count;
+    }
+
+    public float AverageOccupiedHeight()
+    {
+        float average = 0;
+        int count = 0;
+
+        foreach (var cell in cells)
+        {
+            if (cell.cellType == CellType.OCCUPIED)
+            {
+                count++;
+                average += cell.coordinate.Y;
+            }
+        }
+        return (float) Math.Round(average / (double)count, 2);
     }
 }

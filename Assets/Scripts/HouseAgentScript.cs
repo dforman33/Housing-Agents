@@ -18,14 +18,15 @@ using Custom;
 
 public class HouseAgentScript : Agent
 {
-    //[HideInInspector] public GameObject houseCreatorAgentPrefab;
+
     [HideInInspector] private Plot3D plot;
     [HideInInspector] public int[,] heightMap;
     [HideInInspector] public Coordinate3D agentCoordinate;
     [HideInInspector] public byte houseID;
     [HideInInspector] public byte houseTargetSize;
     [HideInInspector] public byte houseCurrentSize;
-    
+    [HideInInspector] private Queue<Coordinate3D> agentPositions;
+
     [HideInInspector] public float scale;
     [HideInInspector] public int maxX;
     [HideInInspector] public int maxY;
@@ -33,6 +34,7 @@ public class HouseAgentScript : Agent
     [HideInInspector] public int movesToTarget = 0;
 
     [HideInInspector] public bool isActive;
+    [HideInInspector] public bool continuesMoving = false;
 
     //Agent Enhanced Configurations
     //Prohibit occupation of already occupied cells
@@ -59,7 +61,7 @@ public class HouseAgentScript : Agent
     //EVENT SUBSCRIBERS
     private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { AddReward(-2f); }
 
-    public void UpdateTrainConfig(bool prohibitOccupyBuiltCells, bool penaliseNonEmptyCellsOccupation, bool penaliseBuildingHigher, bool rewardEmptyNeighbourhood, bool rewardAccessToAir, bool rewardAccessToAirOfOthers, bool rewardProximityToGreenAreas, bool rewardSpeedMeetingTarget)
+    public void UpdateTrainConfig(bool prohibitOccupyBuiltCells, bool penaliseNonEmptyCellsOccupation, bool penaliseBuildingHigher, bool rewardEmptyNeighbourhood, bool rewardAccessToAir, bool rewardAccessToAirOfOthers, bool rewardProximityToGreenAreas, bool rewardSpeedMeetingTarget, bool continuesMoving)
     {
         this.prohibitOccupyBuiltCells = prohibitOccupyBuiltCells; 
         this.penaliseNonEmptyCellsOccupation = penaliseNonEmptyCellsOccupation;
@@ -69,6 +71,7 @@ public class HouseAgentScript : Agent
         this.rewardAccessToAirOfOthers = rewardAccessToAirOfOthers;
         this.rewardProximityToGreenAreas = rewardProximityToGreenAreas;
         this.rewardSpeedMeetingTarget = rewardSpeedMeetingTarget;
+        this.continuesMoving = continuesMoving;
     }
 
 
@@ -81,6 +84,8 @@ public class HouseAgentScript : Agent
         this.plot = plot;
         this.heightMap = plot.heightMap;
         houseCurrentSize = 0;
+
+        agentPositions.Clear();
 
         maxX = plot.width;
         maxY = plot.height;
@@ -108,6 +113,8 @@ public class HouseAgentScript : Agent
         this.heightMap = plot.heightMap;
         houseCurrentSize = 0;
 
+        agentPositions = new Queue<Coordinate3D>();
+
         maxX = plot.width;
         maxY = plot.height;
         maxZ = plot.depth;
@@ -115,6 +122,7 @@ public class HouseAgentScript : Agent
         
         RandomMove();
         isActive = true;
+
     }
 
 
@@ -124,6 +132,16 @@ public class HouseAgentScript : Agent
     private void OccupyCell()
     {
         plot.OccupyCell(agentCoordinate, houseID);
+        agentPositions.Enqueue(agentCoordinate);
+    }
+
+    /// <summary>
+    /// The house agent deoccupies the cell at the first position. 
+    /// </summary>
+    private void DeoccupyCell()
+    {
+        plot.OccupyCell(agentPositions.Peek(), 253); // 253 = OPEN AIR CELL
+        agentPositions.Dequeue();
     }
 
     /// <summary>
@@ -382,6 +400,12 @@ public class HouseAgentScript : Agent
             isActive = false;
             if(rewardSpeedMeetingTarget) AddReward(10 * houseTargetSize / (float) movesToTarget );
         }
+
+        else if (houseCurrentSize == houseTargetSize && !isActive)
+        {
+
+        }
+
         else if (houseCurrentSize > houseTargetSize) { isActive = false; }
     }
 
