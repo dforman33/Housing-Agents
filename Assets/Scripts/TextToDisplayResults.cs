@@ -1,17 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextDisplay8 : MonoBehaviour
+public class TextToDisplayResults : MonoBehaviour
 {
     [SerializeField] Text textToDisplay;
     [SerializeField] string messages;
-    private Scene08Environment scene;
+    private TrainingEnvironment scene;
 
     private int cellsBuilt;
 
     private void Awake()
     {
-        scene = GetComponent<Scene08Environment>();
+        scene = GetComponent<TrainingEnvironment>();
     }
     private void Update()
     {
@@ -31,6 +31,7 @@ public class TextDisplay8 : MonoBehaviour
             + $"\nOccupancy ratio (% of initial available cells): {100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 2)}%"
             + $"\nAgents added: {scene.numberOfPlayers}"
             + $"\nOccupied area to footprint ratio (FAR): {System.Math.Round((double)(scene.occupationCount / (double)scene.plot.footprintArea), 2)}"
+            + $"\nCells in packed neighbourhoods: {scene.packedOccupiedCount}"
             + $"\nTime elapsed: {scene.envMoveSteps / 60}"
             ;
     }

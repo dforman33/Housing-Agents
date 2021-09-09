@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1531219717401948018}
   - component: {fileID: 3013138183111672910}
   m_Layer: 2
-  m_Name: HouseMLAgentS07
+  m_Name: HouseAgentMARL
   m_TagString: Agents
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 85bd8ad05532c9043bfb586a87c369ec, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: HouseBehaviourScene7

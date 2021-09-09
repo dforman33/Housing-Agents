@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3697595928735911466}
   - component: {fileID: -1090067012224759252}
   m_Layer: 0
-  m_Name: Scene08_Plot3D
+  m_Name: EnvironmentTrainingPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,9 +51,10 @@ MonoBehaviour:
   scale: 1
   minHeight: 3
   maxHeight: 8
-  addHardCodedOccupied: 0
+  openSpaceThreshold: 0
   footprintArea: 0
   controller: {fileID: 0}
+  allowTesting: 0
 --- !u!114 &3697595928735911466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,6 +90,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   occupationTarget: 0
   occupationCount: 0
+  packedOccupiedCount: 0
   availableCellsCount: 0
   emptyCellsCount: 0
   occupationFootprint: 0
@@ -115,4 +117,10 @@ MonoBehaviour:
   rewardSpeedMeetingTarget: 0
   rewardAddedAgents: 0
   reward_FAR: 0
+  allowTesting: 1
+  plotWidth: 12
+  plotHeight: 12
+  plotDepth: 10
+  plotMinHeight: 3
+  openSpaceThreshold: 39
   AgentsList: []

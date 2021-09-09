@@ -58,7 +58,19 @@ public class HouseAgentScript : Agent
 
     //EVENT SUBSCRIBERS
     private void Agent_OnBoundaryCoordinate(object sender, EventArgs e) { AddReward(-2f); }
- 
+
+    public void UpdateTrainConfig(bool prohibitOccupyBuiltCells, bool penaliseNonEmptyCellsOccupation, bool penaliseBuildingHigher, bool rewardEmptyNeighbourhood, bool rewardAccessToAir, bool rewardAccessToAirOfOthers, bool rewardProximityToGreenAreas, bool rewardSpeedMeetingTarget)
+    {
+        this.prohibitOccupyBuiltCells = prohibitOccupyBuiltCells; 
+        this.penaliseNonEmptyCellsOccupation = penaliseNonEmptyCellsOccupation;
+        this.penaliseBuildingHigher = penaliseBuildingHigher;
+        this.rewardEmptyNeighbourhood = rewardEmptyNeighbourhood;
+        this.rewardAccessToAir = rewardAccessToAir;
+        this.rewardAccessToAirOfOthers = rewardAccessToAirOfOthers;
+        this.rewardProximityToGreenAreas = rewardProximityToGreenAreas;
+        this.rewardSpeedMeetingTarget = rewardSpeedMeetingTarget;
+    }
+
 
 
     /// <summary>

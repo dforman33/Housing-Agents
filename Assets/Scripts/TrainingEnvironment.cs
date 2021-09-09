@@ -16,13 +16,13 @@ using Custom;
 /// It controls the target size and other paramenters to optimise its own benefit.
 /// </summary>
 
-public class Scene08Environment : MonoBehaviour
+public class TrainingEnvironment : MonoBehaviour
 {
     [HideInInspector] public Plot3D plot;
-    [HideInInspector] public int[,] heightMap;
     [HideInInspector] public CellStateController controller;
     [HideInInspector] public int occupationTarget;
     [HideInInspector] public int occupationCount = 0;
+    [HideInInspector] public int packedOccupiedCount = 0;
     [HideInInspector] public int availableCellsCount = 0;
     [HideInInspector] public int emptyCellsCount = 0;
     [HideInInspector] public int occupationFootprint = 0;
@@ -66,6 +66,14 @@ public class Scene08Environment : MonoBehaviour
     //Rewards the floor to area
     [SerializeField] private bool reward_FAR = true;
 
+    [Header("Testing Configuration")]
+    [SerializeField] public bool allowTesting = false;
+    [SerializeField] int plotWidth = 10;
+    [SerializeField] int plotHeight = 10;
+    [SerializeField] int plotDepth = 10;
+    [SerializeField] int plotMinHeight = 3;
+    [Range(25, 75)]
+    [SerializeField] public int openSpaceThreshold = 75;
 
     private int playerMoves = 0;
     private int currentPlayer;
@@ -74,8 +82,20 @@ public class Scene08Environment : MonoBehaviour
     [HideInInspector] public List<HouseAgentScript> AgentsList = new List<HouseAgentScript>();
 
 
-     
+
     /// METHODS
+
+    /// <summary>
+    /// Passes the configuration from the environment into the plot class.
+    /// </summary>
+    private void PlotConfig()
+    {
+        plot.width = plotWidth;
+        plot.height = plotHeight;
+        plot.depth = plotDepth;
+        plot.minHeight = plotMinHeight;
+        plot.allowTesting = allowTesting;
+    }
 
     /// <summary>
     /// Moves to the next player within the list of players.
@@ -104,6 +124,7 @@ public class Scene08Environment : MonoBehaviour
         occupationCount = plot.CellTypeCount(CellType.OCCUPIED);
         occupationFootprint = plot.CellTypeFootprint(CellType.OCCUPIED);
         emptyCellsCount = plot.CellTypeCount(CellType.EMPTY);
+        packedOccupiedCount = plot.CountPackedOccupiedCells();
     }
 
     /// <summary>
@@ -113,13 +134,20 @@ public class Scene08Environment : MonoBehaviour
     {
         environmentResets++;
 
-        int newWidth = UnityEngine.Random.Range(8, 20);
-        int newHeight = UnityEngine.Random.Range(8, 20);
-        int newDepth = UnityEngine.Random.Range(8, 20);
+        if (!allowTesting)
+        {
+            plotWidth = UnityEngine.Random.Range(8, 20);
+            plotHeight = UnityEngine.Random.Range(8, 20);
+            plotDepth = UnityEngine.Random.Range(8, 20);
+        }
 
-        // This should provide an open space threshold ranging between 50 and 80, meaning 50 and 20% of open space
-        int openSpaceThreshold = 50 + 10 * UnityEngine.Random.Range(0, 4);
-        plot.ResetBoard(newWidth, newHeight, newDepth, openSpaceThreshold);
+        PlotConfig();
+
+        // This should provide an open space threshold ranging between 25 and 75, meaning 75 and 25% of open space
+        int newOpenSpaceThreshold = 25 + 10 * UnityEngine.Random.Range(0, 6);
+        openSpaceThreshold = allowTesting ? openSpaceThreshold : newOpenSpaceThreshold;
+
+        plot.ResetBoard(openSpaceThreshold);
 
         List<HouseAgentScript> tempAgentsList = new List<HouseAgentScript>();
         for (int i = 0; i < AgentsList.Count; i++)
@@ -185,26 +213,14 @@ public class Scene08Environment : MonoBehaviour
         instance.transform.parent = transform;
         instance.name = $"houseID-{numberOfPlayers}";
         HouseAgentScript houseAgent = instance.GetComponent<HouseAgentScript>();
-        AgentTrainConfig(houseAgent);
+        houseAgent.UpdateTrainConfig(prohibitOccupyBuiltCells, penaliseNonEmptyCellsOccupation, penaliseBuildingHigher, rewardEmptyNeighbourhood, rewardAccessToAir, rewardAccessToAirOfOthers, rewardProximityToGreenAreas, rewardSpeedMeetingTarget);
+        Debug.Log($"Agent prohibitOccupyBuiltCells set to: {houseAgent.prohibitOccupyBuiltCells}");
         houseAgent.AgentInit((byte)numberOfPlayers, (byte)UnityEngine.Random.Range(6, 12), this.plot);
         AgentsList.Add(houseAgent);
         multiAgentGroup.RegisterAgent(AgentsList[numberOfPlayers - 1]);
         occupationTarget += houseAgent.houseTargetSize;
-        Debug.Log($"Player {numberOfPlayers} added, occupation target now is {occupationTarget}.");
-    }
-
-    public void AgentTrainConfig(HouseAgentScript hAgent)
-    {
-        hAgent.penaliseNonEmptyCellsOccupation = penaliseNonEmptyCellsOccupation;
-        hAgent.penaliseBuildingHigher = penaliseBuildingHigher;
-        hAgent.rewardEmptyNeighbourhood = rewardEmptyNeighbourhood;
-        hAgent.rewardAccessToAir = rewardAccessToAir;
-        hAgent.rewardAccessToAirOfOthers = rewardAccessToAirOfOthers;
-        hAgent.rewardProximityToGreenAreas = rewardProximityToGreenAreas;
-        hAgent.rewardSpeedMeetingTarget = rewardSpeedMeetingTarget;
-
-    }
-    
+        //Debug.Log($"Player {numberOfPlayers} added, occupation target now is {occupationTarget}.");
+    }   
 
 
     /*
@@ -235,6 +251,7 @@ public class Scene08Environment : MonoBehaviour
     {
         controller = GetComponent<CellStateController>();
         plot = GetComponent<Plot3D>();
+        PlotConfig();
         plot.SetupBoard();
 
         //subscribe to actions and events
@@ -248,7 +265,7 @@ public class Scene08Environment : MonoBehaviour
     private void Start()
     {
         //Add constraints
-        int openSpaceThreshold = 75;
+        openSpaceThreshold = allowTesting? openSpaceThreshold : 75;
         plot.AddPlotConstraints(openSpaceThreshold);
 
         ParameterSetup();

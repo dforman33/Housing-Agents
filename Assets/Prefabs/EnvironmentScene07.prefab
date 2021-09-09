@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3697595928735911466}
   - component: {fileID: 3697595928735911476}
   m_Layer: 0
-  m_Name: Scene07_Plot3D
+  m_Name: EnvironmentScene07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

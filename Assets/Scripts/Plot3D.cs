@@ -8,23 +8,22 @@ using Custom;
 public class Plot3D : MonoBehaviour
 {
     [Header("Initial state setting out")]
-
     public int width = 10; //x length
     public int height = 10; //y height
     public int depth = 10; //z length
     public float scale = 1;
 
     public int minHeight = 3; //y height
-    public int maxHeight = 8; //y height
+    public int maxHeight; //y height
+    public int openSpaceThreshold; //y height
 
-    [SerializeField] private static Vector3 sunReverseDirection = new Vector3(0.1f, 1, 0.1f);
-    [SerializeField] public bool addHardCodedOccupied = false;
-
+    [HideInInspector] private static Vector3 sunReverseDirection = new Vector3(0.1f, 1, 0.1f);
     [HideInInspector] public Cell3D[,,] cells;
     [HideInInspector] public int[,] heightMap;
-    [HideInInspector] public int[,] openGFMap;
+    [HideInInspector] public int[,] greenAreaMap;
     [HideInInspector] public int footprintArea;
     [HideInInspector] public CellStateController controller;
+    [HideInInspector] public bool allowTesting = false;
 
     //EVENTS
     public event Action<int> OnOccupyCell;
@@ -35,7 +34,7 @@ public class Plot3D : MonoBehaviour
         {
             for (int z = 0; z < depth; z++)
             {
-                if (openGFMap[x, z] == 1)
+                if (greenAreaMap[x, z] == 1)
                 {
                     Vector3 rayStart = cells[x, 0, z].cellPos;
                     Vector3 rayEnd = rayStart + 100 * sunReverseDirection;
@@ -46,19 +45,16 @@ public class Plot3D : MonoBehaviour
         }      
     }
 
-    public void ResetBoard(int newWidth, int newHeight, int newDepth, int openSpaceThreshold)
+    public void ResetBoard(int openSpaceThreshold)
     {
-        this.width = newWidth;
-        this.height = newHeight;
-        this.depth = newDepth;
         footprintArea = width * depth;
 
-        foreach (var cell in cells) 
-        { 
-            try { Destroy(cell.gameObject); } 
-            catch { } 
+        foreach (var cell in cells)
+        {
+            try { Destroy(cell.gameObject); }
+            catch { }
         }
-        
+
         SetupBoard();
         AddPlotConstraints(openSpaceThreshold);
     }
@@ -70,6 +66,7 @@ public class Plot3D : MonoBehaviour
         controller = GetComponent<CellStateController>();
 
         cells = new Cell3D[width, height, depth];
+
         footprintArea = width * depth;
 
         for (int y = 0; y < height; y++)
@@ -112,16 +109,26 @@ public class Plot3D : MonoBehaviour
     public void AddPlotConstraints(int openSpaceThreshold)
     {
         CleanBoard();
-        maxHeight = maxHeight <= height - 2 ? maxHeight : height - 2;
-        heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
-        int numAttractors = width * depth < 1 ? 1 + 1 : (int)((width * depth) / 100);
-        openGFMap = new OpenGFGenerator(this, numAttractors, openSpaceThreshold).openGFMap;
+        maxHeight = height - 2;
+
+        if (allowTesting)
+        {
+            heightMap = HeightMapGen.GenerateFixedMap(this, minHeight, maxHeight);
+            greenAreaMap = OpenGreenAreaGenerator.GenerateFixedMap(this, openSpaceThreshold); 
+
+        }
+
+        if (!allowTesting)
+        {
+            heightMap = new HeightMapGen(this, minHeight, maxHeight, 2).heightMap;
+            int numAttractors = width * depth < 1 ? 1 + 1 : (int)((width * depth) / 100);
+            greenAreaMap = new OpenGreenAreaGenerator(this, numAttractors, openSpaceThreshold).greenAreaMap;
+        }
 
         AddEmptySides();
         AddSkyLine();
         AddGround();
         DisplayOpenSpace();
-        if(addHardCodedOccupied) AddSomeOccupied();
     }
 
     /// <summary>
@@ -178,13 +185,13 @@ public class Plot3D : MonoBehaviour
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (openGFMap[x, z] == 1 && y == 0)
+                    if (greenAreaMap[x, z] == 1 && y == 0)
                     {
                         cells[x, y, z].UpdateCell(254); // 254 = OPEN GROUND CELL
                         count++;
                     }
 
-                    if (openGFMap[x, z] == 1 && y > 0)
+                    if (greenAreaMap[x, z] == 1 && y > 0)
                     {
                         cells[x, y, z].UpdateCell(253); // 253 = OPEN AIR CELL
                     }
@@ -248,7 +255,7 @@ public class Plot3D : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                if (openGFMap[x, z] == 1)
+                if (greenAreaMap[x, z] == 1)
                 {
                     if (RayCast(new Coordinate3D(x, 0, z), sunReverseDirection, "CellOccupied"))
                     {
@@ -450,6 +457,18 @@ public class Plot3D : MonoBehaviour
         foreach (var cell in cells) { if (cell.cellType == celltype) count++; }
         return count;
 
+    }
+
+    public int CountPackedOccupiedCells()
+    {
+        int count = 0;
+        foreach (var cell in cells) 
+        { 
+            if (cell.cellType == CellType.OCCUPIED) 
+                if (ReadSqrNeighbors(cell.coordinate, CellType.OCCUPIED) == 15) 
+                    count++; 
+        }
+        return count;
     }
 
     /// <summary>

@@ -122,6 +122,68 @@ namespace Custom
             }
         }
 
+
+        /// <summary>
+        /// Takes inputs to generate a heighmap with 2 attractors that will dictate the skyline of the aggregation.
+        /// </summary>
+        /// <param name="plot">The plot where the heightmap is operating.</param>
+        /// <param name="minHeight">The minimim height expected.</param>
+        /// <param name="maxHeight">The minimim height expected.</param>
+        /// <param name="attractorsCount">The number of attractors, these are created randomly. </param>
+        /// <returns>A new heightmap</returns>
+
+        public static int[,] GenerateFixedMap(Plot3D plot, int minHeight, int maxHeight)
+        {
+            int[,] heightMap = new int[plot.width, plot.depth];
+            float scale = plot.scale;
+            List<Tuple<int, int, int>> attractors = new List<Tuple<int, int, int>>();
+
+            for (int x = 0; x < plot.width; x++)
+            {
+                for (int z = 0; z < plot.depth; z++)
+                {
+                    heightMap[x, z] = minHeight;
+                }
+            }
+
+            //hard coded attractors
+            attractors.Add(new Tuple<int, int, int>(1, plot.depth - 4, 5));
+            attractors.Add(new Tuple<int, int, int>(plot.width - 2, 3, 7));
+
+            //generate map function
+            float[,] distances = new float[plot.width, plot.depth];
+
+            float minDist = float.MaxValue;
+            float maxDist = float.MinValue;
+
+
+            for (int x = 0; x < plot.width; x++)
+            {
+                for (int z = 0; z < plot.depth; z++)
+                {
+                    float value = 0;
+                    for (int i = 0; i < attractors.Count; i++)
+                    {
+                        float valueM = (float)(1 / (0.5 + (plot.depth + plot.width) + Mathf.Pow(CalculateManhattanDistance(x, attractors[i].Item1, z, attractors[i].Item2), 2)));
+                        float valueE = (float)(1 / (0.5 + (plot.depth + plot.width) + Mathf.Pow(CalculateEuclideanDistance(x, attractors[i].Item1, z, attractors[i].Item2), 2)));
+                        value += (attractors[i].Item3 * (valueM + valueE));
+                    }
+                    if (value < minDist) minDist = value;
+                    if (value > maxDist) maxDist = value;
+                    distances[x, z] = value;
+                }
+            }
+
+            for (int x = 0; x < plot.width; x++)
+            {
+                for (int z = 0; z < plot.depth; z++)
+                {
+                    heightMap[x, z] = Mathf.RoundToInt(RemapFloats(distances[x, z], minDist, maxDist, minHeight, maxHeight));
+                }
+            }
+            return heightMap;
+        }
+
         /// <summary>
         /// Calculates the Manhattan distance between the two points.
         /// From https://codereview.stackexchange.com/questions/120933/calculating-distance-with-euclidean-manhattan-and-chebyshev-in-c
@@ -161,6 +223,20 @@ namespace Custom
         private static float RemapFloats(float value, float oldMin, float oldMax, float newLow, float newMax)
         {
             return newLow + (value - oldMin) * (newMax - newLow) / (oldMax - oldMin);
+        }
+
+        /// <summary>
+        /// The methods provides remapping for a value.
+        /// </summary>
+        /// <param name="value">The value to be remapped.</param>
+        /// <param name="oldMin">The origin lower bound.</param>
+        /// <param name="oldMax">The origin upper bound.</param>
+        /// <param name="newLow">The target lower bound.</param>
+        /// <param name="newMax">The target upper bound.</param>
+        /// <returns>The remapped integer value given the origin and target bounds.</returns>
+        private static float RemapInt(int value, int oldMin, int oldMax, int newLow, int newMax)
+        {
+            return Mathf.FloorToInt(newLow + (value - oldMin) * (newMax - newLow) / (float)(oldMax - oldMin));
         }
     }
 

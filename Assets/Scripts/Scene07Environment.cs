@@ -86,7 +86,7 @@ public class Scene07Environment : MonoBehaviour
         // This should provide an open space threshold ranging between 50 and 80, meaning 50 and 20% of open space
         int openSpaceThreshold = 50 + 10 * UnityEngine.Random.Range(0, 4);
 
-        plot.ResetBoard(newWidth, newHeight, newDepth, openSpaceThreshold);
+        //plot.ResetBoard(newWidth, newHeight, newDepth, openSpaceThreshold);
 
         //Read new heightmap
         heightMap = plot.heightMap;
