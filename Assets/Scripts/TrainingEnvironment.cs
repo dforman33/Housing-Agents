@@ -302,6 +302,7 @@ public class TrainingEnvironment : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space)) ResetScene();
         if (Input.GetKeyDown(KeyCode.Alpha1)) AddAgent();
+        if (Input.GetKeyDown(KeyCode.R)) allowTesting = !allowTesting;
 
         AgentsList[currentPlayer - 1].RequestDecision();
 

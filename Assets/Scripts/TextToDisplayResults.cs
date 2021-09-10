@@ -72,6 +72,11 @@ public class TextToDisplayResults : MonoBehaviour
             + $"\nCells in packed neighbourhoods: {scenePackedCells}"
             + $"\nAverage ocuppation height: {avgOccupiedHeight}"
             + $"\nTime elapsed: {timeElapsed}"
+
+            + $"\n \nINSTRUCTIONS:"
+            + $"\nPress space bar to reset environment."
+            + $"\nPress 1 to add agents manually."
+            + $"\nPress R activate/deactive random configurations."
             ;
 
     }
