@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BrainParameters:
     VectorObservationSize: 18
-    NumStackedVectorObservations: 5
+    NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 0700000002000000
@@ -55,7 +55,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 85bd8ad05532c9043bfb586a87c369ec, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 44002e428a76ecc44873b3ef8a62e8b3, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: HouseBehaviourScene7
@@ -88,6 +88,7 @@ MonoBehaviour:
   maxZ: 0
   movesToTarget: 0
   isActive: 0
+  continuesMoving: 0
   prohibitOccupyBuiltCells: 1
   penaliseNonEmptyCellsOccupation: 1
   penaliseBuildingHigher: 1

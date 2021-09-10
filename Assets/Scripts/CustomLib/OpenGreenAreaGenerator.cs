@@ -155,7 +155,7 @@ namespace Custom
 
             //hard coded attractors
             //attractors.Add(new Tuple<int, int, int>(plot.width - 3, plot.depth - 1, 100));
-            attractors.Add(new Tuple<int, int, int>(2, 1, 100));
+            attractors.Add(new Tuple<int, int, int>(5, 3, 100));
 
             //generate map function
             

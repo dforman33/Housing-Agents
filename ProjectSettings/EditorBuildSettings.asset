@@ -5,10 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/07_ML-MultiAgent.unity
-    guid: db17c0aac16115b42a3eb1db5b981482
   - enabled: 1
-    path: Assets/Scenes/08_ML-MultiAgentUnlim.unity
-    guid: 532292c8b987aa2448d077784e3c2c22
+    path: Assets/Scenes/03_MARL-Testing_AnyScenario.unity
+    guid: 535eea334c590d941af8c0049260b60c
   m_configObjects: {}

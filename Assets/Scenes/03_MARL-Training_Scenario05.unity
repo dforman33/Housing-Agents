@@ -336,13 +336,69 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotDepth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotWidth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotHeight
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: reward_FAR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: allowTesting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: continuesMoving
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAir
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAddedAgents
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseBuildingHigher
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardEmptyNeighbourhood
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardSpeedMeetingTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAirOfOthers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardProximityToGreenAreas
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseNonEmptyCellsOccupation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_Name
-      value: Scene08_Plot3D_D
+      value: EnvironmentTraining_PlotD
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911465, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_RootOrder
@@ -412,7 +468,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToDisplay: {fileID: 1514049335}
-  messages: 
+  scenarioReference: 
+  filePath: 
 --- !u!1 &1136350507
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,9 +657,65 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotDepth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotWidth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotHeight
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: reward_FAR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: allowTesting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: continuesMoving
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAir
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAddedAgents
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseBuildingHigher
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardEmptyNeighbourhood
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardSpeedMeetingTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAirOfOthers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardProximityToGreenAreas
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseNonEmptyCellsOccupation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_Name
-      value: Scene08_Plot3D_A
+      value: EnvironmentTraining_PlotA
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_IsActive
@@ -665,13 +778,69 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotDepth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotWidth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotHeight
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: reward_FAR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: allowTesting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: continuesMoving
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAir
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAddedAgents
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseBuildingHigher
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardEmptyNeighbourhood
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardSpeedMeetingTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAirOfOthers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardProximityToGreenAreas
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseNonEmptyCellsOccupation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_Name
-      value: Scene08_Plot3D_C
+      value: EnvironmentTraining_PlotC
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911465, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_RootOrder
@@ -741,7 +910,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToDisplay: {fileID: 1514049335}
-  messages: 
+  scenarioReference: 
+  filePath: 
 --- !u!1001 &1976727391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -749,13 +919,69 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotDepth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotWidth
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: plotHeight
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: reward_FAR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: allowTesting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: continuesMoving
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAir
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAddedAgents
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseBuildingHigher
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardEmptyNeighbourhood
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardSpeedMeetingTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardAccessToAirOfOthers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: rewardProximityToGreenAreas
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1090067012224759252, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
+      propertyPath: penaliseNonEmptyCellsOccupation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_Name
-      value: Scene08_Plot3D_B
+      value: EnvironmentTraining_PlotB
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3697595928735911465, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
       propertyPath: m_RootOrder
@@ -825,7 +1051,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToDisplay: {fileID: 1514049335}
-  messages: 
+  scenarioReference: 
+  filePath: 
 --- !u!1 &2109767902 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3697595928735911464, guid: dd59ffa9c71a78346a0b66997aa18857, type: 3}
@@ -844,4 +1071,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToDisplay: {fileID: 1514049335}
-  messages: 
+  scenarioReference: 
+  filePath: 

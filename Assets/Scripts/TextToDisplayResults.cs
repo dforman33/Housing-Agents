@@ -29,14 +29,16 @@ public class TextToDisplayResults : MonoBehaviour
     // ACTION SUBSCRIBER
     private void Text_OnPlotReset(float occupancyR, int numPlayers, float FAR, int packedOccupiedCount, float avgOccupiedHeight, int timeElapsed)
     {
-        info.AddRecording(occupancyR, numPlayers, FAR, packedOccupiedCount, avgOccupiedHeight, timeElapsed);
+        try { info.AddRecording(occupancyR, numPlayers, FAR, packedOccupiedCount, avgOccupiedHeight, timeElapsed); }
+        catch { }
     }
 
     private void Awake()
     {
         scene = GetComponent<TrainingEnvironment>();
         info = new RecordInfo();
-        info.Initilaise(scenarioReference, filePath);
+        try { info.Initilaise(scenarioReference, filePath); }
+        catch { }
 
         //subscribe to actions and events
         scene.OnPlotReset += Text_OnPlotReset;
@@ -44,9 +46,9 @@ public class TextToDisplayResults : MonoBehaviour
 
     private void Update()
     {
-        occupancyRatio = (float)(100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 2));
+        occupancyRatio = (float)(100 * System.Math.Round((double)(scene.occupationCount / (double)scene.availableCellsCount), 4));
         numPlayers = scene.numberOfPlayers;
-        FAR = (float) Math.Round((double)(scene.occupationCount / (double)scene.plot.footprintArea), 2);
+        FAR = (float) Math.Round((double)(scene.occupationCount / (double)scene.plot.footprintArea), 4);
         scenePackedCells = scene.packedOccupiedCount;
         avgOccupiedHeight = scene.plot.AverageOccupiedHeight();
         timeElapsed = $"{scene.envMoveSteps / 60}:{scene.envMoveSteps % 60}";
@@ -61,7 +63,7 @@ public class TextToDisplayResults : MonoBehaviour
             + $"\nOccupied cells: {scene.occupationCount}"
             + $"\nOccupied footprint: {scene.occupationFootprint}"
             + $"\nPlot footprint (sq. units): {scene.plot.footprintArea}"
-            + $"\nOccupation target: {100 * System.Math.Round(scene.occupationRateLimit, 2)}%"
+            + $"\nOccupation target: {100 * System.Math.Round(scene.occupationRateLimit, 4)}%"
 
             + $"\n \nEVALUATION PARAMETERS:"
             + $"\nOccupancy ratio (% of initial available cells): {occupancyRatio}%"
@@ -76,7 +78,8 @@ public class TextToDisplayResults : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        info.CloseRecording();
+        try { info.CloseRecording(); }
+        catch { }
     }
 
     public class RecordInfo

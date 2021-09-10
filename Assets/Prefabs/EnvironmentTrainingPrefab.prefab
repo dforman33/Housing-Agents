@@ -118,10 +118,10 @@ MonoBehaviour:
   rewardAddedAgents: 0
   reward_FAR: 0
   allowTesting: 1
-  plotWidth: 12
-  plotHeight: 12
+  plotWidth: 10
+  plotHeight: 10
   plotDepth: 10
   plotMinHeight: 3
-  openSpaceThreshold: 50
+  openSpaceThreshold: 35
   occupationRateLimit: 0.25
   AgentsList: []

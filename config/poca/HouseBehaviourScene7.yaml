@@ -2,8 +2,8 @@ behaviors:
   HouseBehaviourScene7:
     trainer_type: poca
     hyperparameters:
-      batch_size: 512
-      buffer_size: 10240
+      batch_size: 256
+      buffer_size: 5120
       learning_rate: 0.0003
       beta: 0.005
       epsilon: 0.2
@@ -12,7 +12,7 @@ behaviors:
       learning_rate_schedule: constant
     network_settings:
       normalize: false
-      hidden_units: 128
+      hidden_units: 64
       num_layers: 2
       vis_encode_type: simple
     reward_signals:
@@ -20,7 +20,7 @@ behaviors:
         gamma: 0.99
         strength: 1.0
     keep_checkpoints: 10
-    max_steps: 2000000
+    max_steps: 1000000
     time_horizon: 64
     summary_freq: 50000
 
